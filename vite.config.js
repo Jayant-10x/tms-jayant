@@ -27,6 +27,7 @@ export default defineConfig({
                 // js
                 'resources/js/app.js',
                 'resources/js/pages/project-task-form.js',
+                'resources/js/pages/tasks.js',
                 'resources/js/pages/projects.js',
                 'resources/js/pages/employee.js',
                 'resources/js/pages/my-profile.js',

@@ -85,10 +85,10 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/task/create', [ProjectTaskController::class, 'store'])->middleware('permission:all_tasks.add')->name('task.create');
     Route::get('/all-tasks', [ProjectTaskController::class, 'allTasks'])->middleware('permission:all_tasks.view')->name('all_tasks');
-    Route::get('/task/view/{called_from}/{prt_id}', [ProjectTaskController::class, 'viewTask'])->middleware('permission:all_tasks.view|team_tasks.view|my_tasks.view')->name('task.view');
-    Route::post('/update-task-status/{prt_id}', [ProjectTaskController::class, 'updateTaskStatus'])->middleware('permission:all_my_tasks.edit|team_tasks.edit')->name('update_task_status_via_ajax');
+    Route::get('/task/view/{prt_id}/{called_from?}', [ProjectTaskController::class, 'viewTask'])->middleware('permission:all_tasks.view|team_tasks.view|my_tasks.view')->name('task.view');
+    Route::post('/update-task-status/{prt_id}', [ProjectTaskController::class, 'updateTaskStatus'])->middleware('permission:all_my_tasks.edit|team_tasks.edit|all_tasks.edit')->name('update_task_status_via_ajax');
     Route::post('/upload-task-attachment/{prt_id}', [ProjectTaskController::class, 'uploadTaskAttachment'])->middleware('permission:all_my_tasks.edit|team_tasks.edit')->name('upload_task_attachments_via_ajax');
-    Route::post('/update-sub-task-via-ajax/is-done/{pst_id}', [ProjectSubTaskController::class, 'updateSubTaskIsDone'])->middleware('permission:all_my_tasks.edit|team_tasks.edit')->name('update_sub_task.is_done');
+    Route::post('/update-sub-task-via-ajax/is-done/{pst_id}', [ProjectSubTaskController::class, 'updateSubTaskIsDone'])->middleware('permission:all_my_tasks.edit|team_tasks.edit|all_tasks.edit')->name('update_sub_task.is_done');
     Route::post('/add-sub-task-via-ajax/{prt_id}', [ProjectSubTaskController::class, 'addSubTask'])->middleware('permission:team_tasks.edit')->name('add_sub_task_via_ajax');
     Route::delete('/delete-sub-task-via-ajax/{pst_id}/{prt_id}', [ProjectSubTaskController::class, 'deleteSubTask'])->middleware('permission:all_tasks.edit')->name('delete_sub_task_via_ajax');
 

@@ -266,7 +266,7 @@
                             <iconify-icon icon="solar:calendar-mark-broken"
                                           class="align-middle fs-5 text-danger"></iconify-icon>
                             <span class="assignee-name text-danger">
-                                {{ get_date_time_format($task_data->prt_start_date) }}
+                                {{ get_date_time_format($task_data->prt_due_date) }}
                             </span>
                         </div>
                     </div>

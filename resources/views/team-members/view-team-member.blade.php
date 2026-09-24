@@ -26,7 +26,7 @@
                                     <a href="{{$member_photo}}" target="_blank">
                                         @endif
                                         <img src="{{$member_photo}}"
-                                             class="avatar-lg rounded-3 border border-light border-3"
+                                             class="avatar-lg rounded-3 border border-light border-3 object-fit-cover"
                                              style="height: 120px; width: 120px; border-radius: 50% !important;">
                                         @if(!empty($member_info['emp_photo']))
                                     </a>
@@ -41,8 +41,16 @@
                                 <div class="col-md-12">
                                     <span class="fs-4 text-dark fw-bold">{{$member_info['emp_full_name']}}</span>
                                 </div>
-                                <div class="col-md-12"><span
+                                <div class="col-md-12">
+                                    <span
                                         class="fs-5">{{\App\Enums\DesignationEnum::tryFrom($member_info['emp_designation'])->label()}}</span>
+                                </div>
+                                <div class="col-md-12">
+                                    @php
+                                        $departmentEnum = \App\Enums\DepartmentsEnum::class;
+                                    @endphp
+                                    <span
+                                        class="fs-5">{{$departmentEnum::tryFrom($member_info['emp_department'])->label() . (!empty($member_info['emp_sub_department']) ? ' (' . $departmentEnum::tryFrom($member_info['emp_sub_department'])->label() .')' : '')}}</span>
                                 </div>
                                 <div class="col-md-12"><span style="font-size: 14px"><iconify-icon
                                             icon="solar:letter-broken" class="align-middle fs-5"></iconify-icon> {{$member_info['emp_email']}}</span>

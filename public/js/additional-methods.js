@@ -121,6 +121,19 @@
         return this.optional(element) || /^\w+$/i.test(value);
     }, "Letters, numbers, and underscores only please.");
 
+    $.validator.addMethod("alphaspace", function (value, element) {
+        return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
+    }, "Only letters and spaces are allowed.");
+
+    $.validator.addMethod("strictEmail", function (value, element) {
+        return this.optional(element) || /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/.test(value);
+    }, "Please enter a valid email address with a valid domain.");
+
+    $.validator.addMethod("usernameRule", function (value, element) {
+        // Allows letters, numbers, underscores, hyphens, and dots (must start with a letter)
+        return this.optional(element) || /^[a-zA-Z][a-zA-Z0-9_.-]{2,19}$/.test(value);
+    }, "Username must start with a letter and can only contain letters, numbers, underscores, or hyphens.");
+
     /*
      * Dutch bank account numbers (not 'giro' numbers) have 9 digits
      * and pass the '11 check'.

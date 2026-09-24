@@ -30,7 +30,7 @@
                                     <div class="d-flex flex-wrap align-items-center gap-2 pb-3">
                                         <div class="position-relative d-inline-block">
                                             <img src="{{$emp_photo}}"
-                                                 class="avatar-lg rounded-3 border border-light border-3"
+                                                 class="avatar-lg rounded-3 border border-light border-3 object-fit-cover"
                                                  style="height: 80px; width: 80px; object-fit: cover;">
                                             @isset($member_val->admin_user_details)
                                                 {!! user_online_status_dot($member_val->admin_user_details->adm_id, 'bottom: 0px; right: -3px;') !!}

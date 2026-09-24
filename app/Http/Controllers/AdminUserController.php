@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserRoleEnum;
 use App\Models\AdminUser;
 use App\Models\Employee;
 use Illuminate\Http\Request;
@@ -12,7 +13,7 @@ use Illuminate\Support\Str;
 class AdminUserController extends Controller {
 
     public function allAdminUsers(Request $request) {
-        $all_users = AdminUser::query()->paginate(config('constants.PER_PAGE_ITEM_COUNT'))->withQueryString();
+        $all_users = AdminUser::query()->where('adm_role', '=', UserRoleEnum::ADMIN->value)->paginate(config('constants.PER_PAGE_ITEM_COUNT'))->withQueryString();
         return view('admin-user.all-admin-user', compact('all_users'));
     }
 
@@ -23,7 +24,6 @@ class AdminUserController extends Controller {
             'password' => 'required_with:user_name|min:8|max:' . MAX_LENGTH_20,
             'role' => 'required',
         ]);
-//       /ssssss
 
         $current_date = date(config('constants.DB_DATE_TIME_FORMAT'));
         $emp_data = Employee::query()->where('emp_id', '=', $emp_id)->first();

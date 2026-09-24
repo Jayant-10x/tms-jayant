@@ -280,7 +280,8 @@ $(document).ready(function () {
             full_name: {
                 required: true,
                 minlength: 2,
-                maxlength: 100
+                maxlength: 100,
+                alphaspace: true
             },
             phone_number: {
                 required: true,
@@ -290,7 +291,7 @@ $(document).ready(function () {
             },
             email: {
                 required: true,
-                email: true,
+                strictEmail: true,
                 remote: {
                     url: empEmailUniqueCheckUrl,
                     type: "get",
@@ -371,6 +372,7 @@ $(document).ready(function () {
                 required: true,
                 minlength: 6,
                 maxlength: 20,
+                usernameRule:true
             },
             role: {
                 required: true

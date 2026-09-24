@@ -191,11 +191,13 @@
                         required: true,
                         minlength: 2,
                         maxlength: 100,
+                        alphaspace: true
                     },
                     user_name: {
                         required: true,
                         minlength: 6,
                         maxlength: 20,
+                        usernameRule:true
                     },
                     status: {
                         required: function () {

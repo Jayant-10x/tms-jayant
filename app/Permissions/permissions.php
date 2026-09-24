@@ -121,7 +121,7 @@ $permission_arr = [
             ...$main_permission_arr['all_tasks'],
             'permissions' => [
                 'add' => false,
-                'edit' => false,
+                'edit' => true,
                 'view' => true,
                 'delete' => true,
             ],

@@ -119,7 +119,7 @@ class EmployeeController extends Controller {
             'reporting_to' => 'nullable',
             'joining_date' => 'required|date',
             'status' => 'required',
-            'employee_photo' => 'nullable|image|mimes:jpeg,jpg,png|max:5120',
+            'employee_photo' => 'nullable|file|mimes:jpeg,jpg,png|max:5120',
         ]);
 
         try {
@@ -141,10 +141,6 @@ class EmployeeController extends Controller {
                 $employee->emp_updated_by = setCreatedUpdatedBy();
                 $employee->emp_updated_on = $current_date;
 
-
-                /**
-                 * Todo: whatever get edited here as per the admin columns data get updated on the admin_users table also
-                 */
                 /*
                  * Employee photo
                  */
@@ -167,6 +163,14 @@ class EmployeeController extends Controller {
                     $employee->emp_photo = null;
                 }
                 $employee->save();
+
+                // to sync the code with admin user table
+                $isAdminDetailsExist = AdminUser::query()->where('adm_emp_id', '=', $employee->emp_id)->first();
+                if (!empty($isAdminDetailsExist)) {
+                    $isAdminDetailsExist->adm_name = $employee->emp_full_name;
+                    $isAdminDetailsExist->adm_status = $employee->emp_status;
+                    $isAdminDetailsExist->save();
+                }
             });
 
             return redirect()->back()->with('success', 'Employee updated successfully.');
