@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Collection;
 use Vinkla\Hashids\Facades\Hashids;
 
 function my_encrypt(int|string $value, bool $is_text = false): string {
@@ -120,4 +121,21 @@ function generate_shorten_string($text, $char_length = 25) {
 function get_initials_char(string $text, $returned_limit = 2): string {
     $words = preg_split('/\s+/', trim($text));
     return collect($words)->filter()->take($returned_limit)->map(fn($word) => strtoupper(mb_substr($word, 0, 1)))->implode('');
+}
+
+function generate_pagination($data_collection, string $item_name, string $custom_class = ''): string {
+    if ($data_collection->total() <= config('constants.PER_PAGE_ITEM_COUNT')) {
+        return '<div class="card-footer ' . $custom_class . '">
+                    <div class="small text-muted" >
+                        Showing
+                            <span class="fw-bold" >' . $data_collection->firstItem() . '</span >
+                        to
+                            <span class="fw-bold" >' . $data_collection->lastItem() . '</span >
+                        of
+                            <span class="fw-bold" >' . $data_collection->total() . '</span > '
+            . $item_name . '</div >
+                </div>';
+    }
+
+    return '<div class="card-footer' . $custom_class . '"><div>' . $data_collection->links() . '</div></div>';
 }

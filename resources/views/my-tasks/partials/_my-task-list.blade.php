@@ -53,7 +53,7 @@
                         <div class="d-flex gap-2">
                             @if(permission_can('all_my_tasks', 'view') || is_admin())
                                 <div class="d-flex gap-2">
-                                    {!! generate_view_button(route('task.view', ['called_from' => 'my_task', 'prt_id' => my_encrypt($task->prt_id), 'return_url' => url()->full()])) !!}
+                                    {!! generate_view_button(route('task.view', ['prt_id' => my_encrypt($task->prt_id),'called_from' => 'my_task', 'return_url' => url()->full()])) !!}
                                 </div>
                             @endif
                             {{--{!! generate_edit_button(route('employees.edit', ['emp_id' => my_encrypt($employee->emp_id)])) !!}

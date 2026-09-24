@@ -56,7 +56,7 @@
                                     <div class="d-flex gap-2">
                                         {!! generate_view_button(route('employees.view', ['emp_id' => my_encrypt($employee->emp_id)])) !!}
                                         {!! generate_edit_button(route('employees.edit', ['emp_id' => my_encrypt($employee->emp_id)])) !!}
-{{--                                        {!! generate_delete_button(route('employees.list')) !!}--}}
+                                        {{--                                        {!! generate_delete_button(route('employees.list')) !!}--}}
                                     </div>
                                 </td>
                             </tr>
@@ -64,28 +64,12 @@
                         </tbody>
                     </table>
                 </div>
+                {!! generate_pagination($all_employees,"Employees") !!}
             @else
                 {!! generate_no_record_html() !!}
             @endif
             <!-- end table-responsive -->
         </div>
-        @if(!empty($all_employees) && count($all_employees) > 0)
-            <div class="card-footer">
-                <div>
-                    Showing
-                    {{ $all_employees->firstItem() }}
-                    to
-                    {{ $all_employees->lastItem() }}
-                    of
-                    {{ $all_employees->total() }}
-                    employees
-                </div>
-
-                <div>
-                    {{ $all_employees->links() }}
-                </div>
-            </div>
-        @endif
     </div>
 @endsection
 

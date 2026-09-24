@@ -103,6 +103,10 @@
                     @endif
                 </div>
             @endforeach
+
+            <div class="col-md-12">
+                {!! generate_pagination($all_team_members,"Team Members") !!}
+            </div>
         </div>
     @else
         <div class="card">

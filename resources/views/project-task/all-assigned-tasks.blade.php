@@ -54,7 +54,7 @@
                                 <td>
                                     <div class="d-flex gap-2">
                                         @if(permission_can('all_assigned_tasks', 'view'))
-                                            {!! generate_view_button(route('task.view', ['called_from'=> 'all_assigned_tasks', 'prt_id' => my_encrypt($task->prt_id), 'return_url' => url()->full()])) !!}
+                                            {!! generate_view_button(route('task.view', ['prt_id' => my_encrypt($task->prt_id), 'called_from'=> 'all_assigned_tasks', 'return_url' => url()->full()])) !!}
                                         @endif
                                         {{--{!! generate_edit_button(route('employees.edit', ['emp_id' => my_encrypt($employee->emp_id)])) !!}
                                         {!! generate_delete_button(route('employees.list')) !!}--}}

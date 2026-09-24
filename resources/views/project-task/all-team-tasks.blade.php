@@ -54,7 +54,7 @@
                                 <td>
                                     <div class="d-flex gap-2">
                                         @if(permission_can('all_tasks', 'view') || is_admin())
-                                            {!! generate_view_button(route('task.view', ['called_from'=> 'all_team_task', 'prt_id' => my_encrypt($task->prt_id), 'return_url' => url()->full()])) !!}
+                                            {!! generate_view_button(route('task.view', [ 'prt_id' => my_encrypt($task->prt_id),'called_from'=> 'all_team_task', 'return_url' => url()->full()])) !!}
                                         @else
                                             -
                                         @endif

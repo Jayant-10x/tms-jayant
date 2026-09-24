@@ -18,7 +18,7 @@
                             class="team-member-role-pill">{!! \App\Enums\UserRoleEnum::tryFrom('manager')->badge() !!}</span>
                             <div class="d-flex flex-wrap align-items-center gap-2">
                                 <img src="{{$emp_photo}}"
-                                     class="avatar-lg rounded-3 border border-light border-3">
+                                     class="avatar-lg rounded-3 border border-light border-3 object-fit-cover">
                                 <div>
                                     <p class="text-dark fw-medium fs-16 mb-0">{{$project_manager['emp_full_name']}}</p>
                                     <p class="mb-0 badge designation-badge rounded-pill me-1 fs-6">{{$project_manager['emp_designation']->label()}}</p>

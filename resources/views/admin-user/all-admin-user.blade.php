@@ -53,35 +53,19 @@
                                         <td class="text-center">
                                             {!! generate_view_button(route('admin_user_module.view', ['adm_id' => my_encrypt($user->adm_id)])) !!}
                                             {!! generate_edit_button(route('admin_user_module.edit', ['adm_id' => my_encrypt($user->adm_id)])) !!}
-{{--                                            {!! generate_delete_button(route('employees.list')) !!}--}}
+                                            {{--                                            {!! generate_delete_button(route('employees.list')) !!}--}}
                                         </td>
                                     </tr>
                                 @endforeach
                                 </tbody>
                             </table>
                         </div>
+                        {!! generate_pagination($all_users,"Admin Users") !!}
                     @else
                         {!! generate_no_record_html() !!}
                     @endif
                     <!-- end table-responsive -->
                 </div>
-                @if(!empty($all_users) && count($all_users) > 0)
-                    <div class="card-footer">
-                        <div>
-                            Showing
-                            {{ $all_users->firstItem() }}
-                            to
-                            {{ $all_users->lastItem() }}
-                            of
-                            {{ $all_users->total() }}
-                            employees
-                        </div>
-
-                        <div>
-                            {{ $all_users->links() }}
-                        </div>
-                    </div>
-                @endif
             </div>
         </div>
 

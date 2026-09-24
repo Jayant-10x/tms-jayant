@@ -146,7 +146,7 @@
     </div>
 @endsection
 @section('module-right-section')
-    {!! generate_back_to_list_button(route('projects.list')) !!}
+{{--    {!! generate_back_to_list_button(route('projects.list')) !!}--}}
 @endsection
 
 @push('script')

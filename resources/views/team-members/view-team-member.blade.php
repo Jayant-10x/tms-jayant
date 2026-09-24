@@ -168,7 +168,7 @@
                                 <td>
                                     <div class="d-flex gap-2">
                                         @if(permission_can('all_tasks', 'view') || is_admin())
-                                            {!! generate_view_button(route('task.view', ['called_from'=> 'team_member', 'prt_id' => my_encrypt($emp_task->prt_id), 'return_url' => url()->full()])) !!}
+                                            {!! generate_view_button(route('task.view', ['prt_id' => my_encrypt($emp_task->prt_id), 'called_from'=> 'team_member', 'return_url' => url()->full()])) !!}
                                         @else
                                             -
                                         @endif
@@ -181,27 +181,12 @@
                         </tbody>
                     </table>
                 </div>
+
+                {!! generate_pagination($emp_tasks,"Tasks") !!}
             @else
                 {!! generate_no_record_html(class: 'p-0') !!}
             @endif
         </div>
-        @if(!empty($emp_tasks) && count($emp_tasks) > 0)
-            <div class="card-footer">
-                <div>
-                    Showing
-                    {{ $emp_tasks->firstItem() }}
-                    to
-                    {{ $emp_tasks->lastItem() }}
-                    of
-                    {{ $emp_tasks->total() }}
-                    tasks
-                </div>
-
-                <div>
-                    {{ $emp_tasks->links() }}
-                </div>
-            </div>
-        @endif
     </div>
 @endsection
 

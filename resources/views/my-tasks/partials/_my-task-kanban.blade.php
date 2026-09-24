@@ -141,7 +141,7 @@
                         <div class="d-flex align-items-start gap-2 mb-2">
                             <iconify-icon icon="bx:dots-vertical-rounded" class="drag-handle fs-5 mt-0"></iconify-icon>
                             <p class="fw-bold mb-0 text-dark lh-sm fs-6">
-                                <a href="{{ route('task.view', ['called_from'=> 'my_task', 'prt_id' => my_encrypt($task->prt_id)])}}?return_url={{ urlencode(url()->full()) }}"
+                                <a href="{{ route('task.view', ['prt_id' => my_encrypt($task->prt_id),'called_from'=> 'my_task'])}}?return_url={{ urlencode(url()->full()) }}"
                                    target="_blank">
                                     {{ generate_shorten_string($task->prt_title) }}
                                 </a>
