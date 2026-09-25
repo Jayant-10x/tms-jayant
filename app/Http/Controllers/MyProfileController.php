@@ -64,7 +64,7 @@ class MyProfileController extends Controller {
             'full_name' => 'required|min:' . MIN_LENGTH . '|max:' . MAX_LENGTH_100,
             'phone_number' => 'nullable|numeric',
             'email' => 'required|email',
-            'employee_photo' => 'nullable|image|mimes:jpeg,jpg,png|max:5120',
+            'employee_photo' => 'nullable|file|mimes:jpeg,jpg,png|max:5120',
         ]);
 
         $current_date = date(config('constants.DB_DATE_TIME_FORMAT'));

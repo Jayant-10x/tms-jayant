@@ -92,7 +92,7 @@
         {{-- Start Date --}}
         <div class="col-lg-4">
             <div class="mb-3">
-                <label for="start_date" class="form-label">Start Date<span class="text-danger">*</span></label>
+                <label for="start_date" class="form-label">Start Date <span class="text-danger">*</span></label>
                 <input type="text" name="start_date" id="start_date"
                        class="form-control @error('start_date') is-invalid @enderror" autocomplete="off"
                        value="{{ old('start_date') }}">
@@ -107,7 +107,7 @@
         {{-- Due Date --}}
         <div class="col-lg-4">
             <div class="mb-3">
-                <label for="due_date" class="form-label">Due Date<span class="text-danger">*</span></label>
+                <label for="due_date" class="form-label">Due Date <span class="text-danger">*</span></label>
                 <input type="text" name="due_date" id="due_date"
                        class="form-control @error('due_date') is-invalid @enderror" autocomplete="off"
                        value="{{ old('due_date') }}">
@@ -122,7 +122,7 @@
         {{-- Estimated Hours --}}
         <div class="col-lg-4">
             <div class="mb-3">
-                <label for="estimated_hours" class="form-label">Est. Hours</label>
+                <label for="estimated_hours" class="form-label">Est. Hours <span class="text-danger">*</span></label>
                 <input type="number" name="estimated_hours" id="estimated_hours"
                        class="form-control @error('estimated_hours') is-invalid @enderror" autocomplete="off" min="0"
                        step="0.5" value="{{ old('estimated_hours') }}">
@@ -213,7 +213,7 @@
         <div class="col-md-10">
             <div class="mb-3">
                 <label for="task_tags" class="form-label">
-                    Tags<span class="text-danger">*</span>
+                    Tags <span class="text-danger">*</span>
                     <span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Maximum 10 tags are allowed."
                           data-bs-container="body" class="d-inline-flex align-middle">
                     <iconify-icon
@@ -245,7 +245,7 @@
         <div class="col-md-11">
             <div class="mb-3">
                 <label for="sub_tasks" class="form-label">
-                    Checklist / Subtasks<span class="text-danger">*</span>
+                    Checklist / Subtasks <span class="text-danger">*</span>
                     <span data-bs-toggle="tooltip" data-bs-placement="top"
                           data-bs-title="Maximum 10 Checklist / Subtasks are allowed." data-bs-container="body"
                           class="d-inline-flex align-middle">

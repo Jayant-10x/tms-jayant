@@ -52,9 +52,11 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="row justify-content-between mb-1">
-                                        <div class="col-md-4 text-dark fw-semibold fs-16">
-                                            Checklist (<span id="checklist-completed">0</span> /<span
-                                                id="checklist-total">0</span>)
+                                        <div class="col-md-10 text-dark fw-semibold fs-16">
+                                            Checklist / Subtask <span
+                                                class="badge badge-soft-primary fs-4 rounded-5 badge-outline-primary px-2 ms-1"><span
+                                                    id="checklist-completed">0</span> / <span
+                                                    id="checklist-total">0</span></span>
                                         </div>
                                         <div class="col-md-2 fs-14 text-primary fw-bold text-end"
                                              id="checklist-percentage">0%
@@ -73,11 +75,10 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="row mt-3 align-items-center justify-content-between" id="checklist-container">
                                 @foreach($task_data->subTasks as $sub_task)
                                     <div class="col-md-11 text-wrap pb-2">
-                                        @if($all_permission || $employee_permission)
+                                        @if($all_permission || ($employee_permission && in_array(get_logged_in_user_emp_id(), $project_task_assignee)))
                                             <input type="checkbox" class="form-check-input text-dark checklist-item"
                                                    value="{{ my_encrypt($sub_task->pst_id) }}" {{ $sub_task->pst_is_done ? 'checked' : '' }}>
                                         @endif
@@ -87,12 +88,26 @@
                                     </div>
 
                                     @if($all_permission)
-                                        <div class="col-md-1 pb-2">
+                                        <div class="col-md-1 pb-2 d-flex g-0">
+                                            <span data-bs-toggle="tooltip"
+                                                  data-bs-placement="top"
+                                                  data-bs-title="View History">
+                                                <a href="javascript:void(0);"
+                                                   class="custom-pop-up-view-modal"
+                                                   data-bs-section="{{my_encrypt('sub-task-history', true)}}"
+                                                   data-bs-mode="{{my_encrypt('view', true)}}"
+                                                   data-bs-primary-id="{{my_encrypt($sub_task->pst_id)}}"
+                                                   data-bs-toggle="modal" data-bs-target="#viewModalPopup">
+                                                    <iconify-icon
+                                                        icon="solar:history-broken"
+                                                        class="align-middle fs-16 fw-bold text-black"></iconify-icon>
+                                                </a>
+                                            </span>
                                             <a href="javascript:void(0);" data-bs-toggle="tooltip"
                                                data-bs-placement="top"
                                                data-bs-title="Delete"
                                                data-sub_task_id="{{my_encrypt($sub_task->pst_id)}}"
-                                               class="delete-sub-task">
+                                               class="delete-sub-task ms-3">
                                                 <iconify-icon icon="solar:trash-bin-trash-broken"
                                                               class="align-middle fs-16 fw-bold text-danger"></iconify-icon>
                                             </a>
@@ -109,10 +124,10 @@
 
                                     <div class="col-md-1 align-content-center text-center">
                                         <button type="button"
-                                                class="btn btn-xs btn-soft-primary btn-outline-primary rounded"
+                                                class="btn  btn-soft-primary btn-outline-primary rounded"
                                                 id="addSubTask">
                                             <iconify-icon icon="solar:add-bold"
-                                                          class="align-middle fs-14"></iconify-icon>
+                                                          class="align-middle fs-4 fw-b"></iconify-icon>
                                         </button>
                                     </div>
                                 </div>

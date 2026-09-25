@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class AuthenticationController extends Controller {
     /**
@@ -22,26 +22,44 @@ class AuthenticationController extends Controller {
      * Authenticate user
      */
     public function authenticate(Request $request) {
+        // 1. Validate the incoming request data
         $credentials = $request->validate([
             'adm_user_name' => ['required', 'string'],
             'password' => ['required', 'string'],
         ]);
-        $credentials['adm_status'] = 1;
 //        $remember = $request->boolean('remember');
+        // 2. Attempt to log the user in using the credentials
         if (Auth::attempt($credentials)) {
             $admin = Auth::user();
-            $request->session()->regenerate();
-            $logged_in_user_session_arr = [
-                'user_id' => $admin->adm_id,
-                'emp_id' => $admin->adm_emp_id,
-                'user_name' => $admin->adm_user_name,
-                'user_role' => $admin->adm_role,
-            ];
 
-            $request->session()->put('logged_in_user_session', $logged_in_user_session_arr);
-            return redirect()->intended(route('dashboard'))->with('success', 'Login successful.');
+            // 3. Check if the authenticated administrator is active
+            if ($admin->adm_status == 1) {
+                $request->session()->regenerate();
+
+                $logged_in_user_session_arr = [
+                    'user_id'   => $admin->adm_id,
+                    'emp_id'    => $admin->adm_emp_id,
+                    'user_name' => $admin->adm_user_name,
+                    'user_role' => $admin->adm_role,
+                ];
+
+                $request->session()->put('logged_in_user_session', $logged_in_user_session_arr);
+
+                return redirect()->intended(route('dashboard'))->with('success', 'Login successful.');
+            }
+
+            // 4. If status is deactivated, log them out immediately and throw validation error
+            Auth::logout();
+
+            throw ValidationException::withMessages([
+                'adm_user_name' => 'Your profile is deactivated. Please contact the administrator.',
+            ]);
         }
-        return back()->withErrors(['adm_user_name' => 'The username or password is incorrect.',])->withInput($request->only('adm_user_name'));
+
+        // 5. If authentication fails entirely, throw standard validation error
+        throw ValidationException::withMessages([
+            'adm_user_name' => 'The username or password is incorrect.',
+        ]);
     }
 
     /**

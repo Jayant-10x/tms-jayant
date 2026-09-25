@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\UserRoleEnum;
 use App\Models\ProjectSubTask;
+use App\Models\SubTaskDoneHistory;
 use Illuminate\Http\Request;
 
 class ProjectSubTaskController extends Controller {
@@ -33,6 +34,9 @@ class ProjectSubTaskController extends Controller {
     public function updateSubTaskIsDone(Request $request, $pst_id) {
         $pst_id = my_decrypt($pst_id);
         $prt_id = my_decrypt($request->task_id);
+        $current_date = date(config('constants.DB_DATE_TIME_FORMAT'));
+        $created_updated_by = setCreatedUpdatedBy();
+
         $sub_task = ProjectSubTask::query()
             ->where('pst_id', $pst_id)
             ->where('pst_prt_id', $prt_id)
@@ -42,9 +46,21 @@ class ProjectSubTaskController extends Controller {
             return response()->json(['status' => false, 'message' => 'Sub task not found.',], 404);
         }
         $sub_task->pst_is_done = !$sub_task->pst_is_done;
-        $sub_task->pst_updated_by = setCreatedUpdatedBy();
-        $sub_task->pst_updated_on = date(config('constants.DB_DATE_TIME_FORMAT'));
+        $sub_task->pst_updated_by = $created_updated_by;
+        $sub_task->pst_updated_on = $current_date;
+
         $sub_task->save();
+
+        // history code start
+        SubTaskDoneHistory::query()->insert([
+            'sdh_pst_id' => $pst_id,
+            'sdh_done_by' => get_logged_in_user_id(),
+            'sdh_is_checked' => $sub_task->pst_is_done,
+            'sdh_updated_by' => $created_updated_by,
+            'sdh_updated_on' => $current_date,
+        ]);
+        // history code end
+
         return response()->json(['status' => true, 'message' => 'Checklist updated successfully.', 'is_done' => $sub_task->pst_is_done,]);
     }
 

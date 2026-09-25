@@ -1,7 +1,7 @@
 @extends('layouts.vertical', ['title' => 'My Task','subTitle' => 'My Task'])
-@section('css')
+@push('css')
     @vite('resources/css/project.css')
-@endsection
+@endpush
 @section('content')
     @php
         $task_statistics = $task_statistics[get_logged_in_user_emp_id()];

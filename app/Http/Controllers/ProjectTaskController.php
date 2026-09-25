@@ -17,10 +17,19 @@ class ProjectTaskController extends Controller {
 
         $projectTaskQuery = ProjectTask::query()
             ->with('project')
-            ->join('project_task_assignments', 'project_tasks.prt_id', '=', 'project_task_assignments.pta_prt_id')
-            ->join('employees', 'employees.emp_id', '=', 'project_task_assignments.pta_assign_to')
-            ->select('project_tasks.*', DB::raw('GROUP_CONCAT(DISTINCT ' . $prefix . 'employees.emp_full_name ORDER BY ' . $prefix . 'employees.emp_full_name SEPARATOR ", ") as assignees'))
-            ->groupBy('project_tasks.prt_id');
+            ->select(
+                'project_tasks.*',
+                DB::raw('(
+            SELECT GROUP_CONCAT(
+                DISTINCT ' . $prefix . 'employees.emp_full_name
+                ORDER BY ' . $prefix . 'employees.emp_full_name
+                SEPARATOR ", "
+            )
+            FROM ' . $prefix . 'project_task_assignments
+            INNER JOIN ' . $prefix . 'employees
+                ON ' . $prefix . 'employees.emp_id = ' . $prefix . 'project_task_assignments.pta_assign_to
+            WHERE ' . $prefix . 'project_task_assignments.pta_prt_id = ' . $prefix . 'project_tasks.prt_id
+        ) AS assignees'));
         if (!is_admin()) {
             $loggedInEmpId = get_logged_in_user_emp_id();
 
@@ -66,10 +75,22 @@ class ProjectTaskController extends Controller {
             $loggedInEmpId = get_logged_in_user_emp_id();
             $projectTaskQuery = ProjectTask::query()
                 ->with('project')
-                ->join('project_task_assignments', 'project_tasks.prt_id', '=', 'project_task_assignments.pta_prt_id')
-                ->join('employees', 'employees.emp_id', '=', 'project_task_assignments.pta_assign_to')
-                ->select('project_tasks.*', DB::raw('GROUP_CONCAT(DISTINCT ' . $prefix . 'employees.emp_full_name ORDER BY ' . $prefix . 'employees.emp_full_name SEPARATOR ", ") as assignees'))
-                ->groupBy('project_tasks.prt_id')
+                ->select(
+                    'project_tasks.*',
+                    DB::raw('(
+                    SELECT GROUP_CONCAT(
+                        DISTINCT ' . $prefix . 'employees.emp_full_name
+                        ORDER BY ' . $prefix . 'employees.emp_full_name
+                        SEPARATOR ", "
+                    )
+                    FROM ' . $prefix . 'project_task_assignments
+                    INNER JOIN ' . $prefix . 'employees
+                        ON ' . $prefix . 'employees.emp_id =
+                           ' . $prefix . 'project_task_assignments.pta_assign_to
+                    WHERE ' . $prefix . 'project_task_assignments.pta_prt_id =
+                          ' . $prefix . 'project_tasks.prt_id
+                ) AS assignees')
+                )
                 ->whereHas('project', function ($query) {
                     $query->where('pro_status', '=', ProjectStatus::ACTIVE->value);
                 })
@@ -88,10 +109,22 @@ class ProjectTaskController extends Controller {
 
         $projectTaskQuery = ProjectTask::query()
             ->with('project')
-            ->join('project_task_assignments', 'project_tasks.prt_id', '=', 'project_task_assignments.pta_prt_id')
-            ->join('employees', 'employees.emp_id', '=', 'project_task_assignments.pta_assign_to')
-            ->select('project_tasks.*', DB::raw('GROUP_CONCAT(DISTINCT ' . $prefix . 'employees.emp_full_name ORDER BY ' . $prefix . 'employees.emp_full_name SEPARATOR ", ") as assignees'))
-            ->groupBy('project_tasks.prt_id');
+            ->select(
+                'project_tasks.*',
+                DB::raw('(
+                SELECT GROUP_CONCAT(
+                    DISTINCT ' . $prefix . 'employees.emp_full_name
+                    ORDER BY ' . $prefix . 'employees.emp_full_name
+                    SEPARATOR ", "
+                )
+                FROM ' . $prefix . 'project_task_assignments
+                INNER JOIN ' . $prefix . 'employees
+                    ON ' . $prefix . 'employees.emp_id =
+                       ' . $prefix . 'project_task_assignments.pta_assign_to
+                WHERE ' . $prefix . 'project_task_assignments.pta_prt_id =
+                      ' . $prefix . 'project_tasks.prt_id
+            ) AS assignees')
+            );
         if (!is_admin()) {
             $loggedInEmpId = get_logged_in_user_emp_id();
             $team_members = get_employee_children_in_depth((int)$loggedInEmpId, true, config('constants.DEFAULT_DEPTH'));

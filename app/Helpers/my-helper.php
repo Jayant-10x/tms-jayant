@@ -27,20 +27,17 @@ function generate_custom_html_title($title): string {
 }
 
 function get_created_updated_by_db_column($table, $prefix, $only_updated = false) {
-    $created_arr = [
-        'by' => $table->string($prefix . 'created_by')->nullable(),
-        'on' => $table->timestamp($prefix . 'created_on')->nullable(),
-    ];
-    $updated_arr = [
-        'by' => $table->string($prefix . 'updated_by')->nullable(),
-        'on' => $table->timestamp($prefix . 'updated_on')->nullable(),
-    ];
+    $ret_val = [];
 
-    if ($only_updated) {
-        $ret_val = $updated_arr;
-    } else {
-        $ret_val = array_merge($created_arr, $updated_arr);
+    // Add created columns only if $only_updated is false
+    if (!$only_updated) {
+        $ret_val['created_by'] = $table->string($prefix . 'created_by')->nullable();
+        $ret_val['created_on'] = $table->timestamp($prefix . 'created_on')->nullable();
     }
+
+    // Always add updated columns
+    $ret_val['updated_by'] = $table->string($prefix . 'updated_by')->nullable();
+    $ret_val['updated_on'] = $table->timestamp($prefix . 'updated_on')->nullable();
 
     return $ret_val;
 }
