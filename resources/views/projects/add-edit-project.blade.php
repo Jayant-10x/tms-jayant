@@ -1,8 +1,8 @@
 @extends('layouts.vertical', ['title' => 'Add Project','subTitle' => 'Add Project'])
 
-@section('css')
+@push('css')
     @vite(['node_modules/choices.js/public/assets/styles/choices.min.css'])
-@endsection
+@endpush
 @section('content')
     <div class="card">
         <div class="card-body">

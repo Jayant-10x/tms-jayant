@@ -1,7 +1,7 @@
 @extends('layouts.vertical', ['title' => 'View Project','subTitle' => 'View Project'])
-@section('css')
+@push('css')
     @vite(['resources/css/project.css','node_modules/choices.js/public/assets/styles/choices.min.css'])
-@endsection
+@endpush
 @section('content')
     @php
         $all_permission = (get_logged_in_user_role() == \App\Enums\UserRoleEnum::MANAGER->value && permission_can('all_tasks', 'edit')) || is_admin();

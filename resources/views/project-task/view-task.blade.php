@@ -1,7 +1,7 @@
 @extends('layouts.vertical', ['title' => 'View Task','subTitle' => 'View Task'])
-@section('css')
+@push('css')
     @vite(['resources/css/tasks.css','node_modules/choices.js/public/assets/styles/choices.min.css'])
-@endsection
+@endpush
 @section('content')
     @php
         $all_permission = (get_logged_in_user_role() == \App\Enums\UserRoleEnum::MANAGER->value && permission_can('all_tasks', 'edit')) || is_admin();
@@ -101,7 +101,7 @@
                                 @endforeach
                             </div>
                             @if($all_permission)
-                                <div class="row mb-1 mt-2">
+                                <div class="row mb-1 mt-2 pe-2">
                                     <div class="col-md-11">
                                         <input type="text" id="sub_task" class="form-control" autocomplete="off"
                                                placeholder="Add a subtask or checklist....">
@@ -217,21 +217,22 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-12 mb-1">
-                            <span class="side-card-label">ASSIGNEES</span>
+                            <span class="side-card-label">TAGS</span>
                         </div>
-                        @foreach($task_assignees as $assignee)
-                            <div class="col-md-12 mb-1">
-                                <div class="assignee-item">
-                                    <span class="assignee-char">
-                                        {{ get_initials_char($assignee) }}
+                        <div class="col-md-12 mb-1">
+                            <div class="d-flex flex-wrap gap-1">
+                                @foreach($task_data->prt_tags as $tag)
+                                    <span class="badge text-wrap tag-pill rounded-pill">
+                                        {{ $tag }}
                                     </span>
-                                    <span class="assignee-name">
-                                        {{ $assignee }}
-                                    </span>
-                                </div>
+                                @endforeach
                             </div>
-                        @endforeach
+                        </div>
                     </div>
+                </div>
+            </div>
+            <div class="card task-main-cards">
+                <div class="card-body">
                     <div class="row mt-2">
                         <div class="col-md-12 mb-1">
                             <span class="side-card-label">ASSIGNED BY</span>
@@ -249,50 +250,66 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-12 mb-1">
-                            <span class="side-card-label">START DATE</span>
+                            <span class="side-card-label">ASSIGNEES</span>
                         </div>
-                        <div class="col-md-12 mb-1">
-                            <iconify-icon icon="solar:calendar-mark-broken" class="align-middle fs-5"></iconify-icon>
-                            <span class="assignee-name">
+                        @foreach($task_assignees as $assignee)
+                            <div class="col-md-6 mb-1">
+                                <div class="assignee-item">
+                                    <span class="assignee-char">
+                                        {{ get_initials_char($assignee) }}
+                                    </span>
+                                    <span class="assignee-name">
+                                        {{ $assignee }}
+                                    </span>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            <div class="card task-main-cards">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="row mt-2">
+                                <div class="col-md-12 mb-1">
+                                    <span class="side-card-label">START DATE</span>
+                                </div>
+                                <div class="col-md-12 mb-1 d-flex align-items-center">
+                                    <iconify-icon icon="solar:calendar-mark-broken"
+                                                  class="align-middle fs-5 me-1"></iconify-icon>
+                                    <span class="assignee-name">
                                 {{ get_date_time_format($task_data->prt_start_date) }}
                             </span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-md-12 mb-1">
-                            <span class="side-card-label">DUE DATE</span>
-                        </div>
-                        <div class="col-md-12 mb-1">
-                            <iconify-icon icon="solar:calendar-mark-broken"
-                                          class="align-middle fs-5 text-danger"></iconify-icon>
-                            <span class="assignee-name text-danger">
+                        <div class="col-md-6">
+                            <div class="row mt-2">
+                                <div class="col-md-12 mb-1">
+                                    <span class="side-card-label">DUE DATE</span>
+                                </div>
+                                <div class="col-md-12 mb-1 d-flex align-items-center">
+                                    <iconify-icon icon="solar:calendar-mark-broken"
+                                                  class="align-middle fs-5 text-danger me-1"></iconify-icon>
+                                    <span class="assignee-name text-danger">
                                 {{ get_date_time_format($task_data->prt_due_date) }}
                             </span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-md-12 mb-1">
-                            <span class="side-card-label">ESTIMATED TIME</span>
-                        </div>
-                        <div class="col-md-12 mb-1">
-                            <iconify-icon icon="solar:clock-circle-bold-duotone"
-                                          class="align-middle fs-4 text-dark"></iconify-icon>
-                            <span class="assignee-name text-dark">
+                        <div class="col-md-6">
+                            <div class="row mt-2">
+                                <div class="col-md-12 mb-1">
+                                    <span class="side-card-label">ESTIMATED TIME</span>
+                                </div>
+                                <div class="col-md-12 mb-1">
+                                    <iconify-icon icon="solar:clock-circle-broken"
+                                                  class="align-middle fs-4" style="color: rgb(95 68 255) !important;"></iconify-icon>
+                                    <span class="assignee-name text-dark">
                                 {{ $task_data->prt_est_hours }}h
                             </span>
-                        </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-md-12 mb-1">
-                            <span class="side-card-label">TAGS</span>
-                        </div>
-                        <div class="col-md-12 mb-1">
-                            <div class="d-flex flex-wrap gap-1">
-                                @foreach($task_data->prt_tags as $tag)
-                                    <span class="badge text-wrap tag-pill rounded-pill">
-                                        {{ $tag }}
-                                    </span>
-                                @endforeach
+                                </div>
                             </div>
                         </div>
                     </div>

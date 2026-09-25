@@ -1,8 +1,8 @@
 @extends('layouts.vertical', ['title' => ($mode == 'add'? 'Add' : 'Edit').' Employee'])
 
-@section('css')
+@push('css')
     @vite(['node_modules/choices.js/public/assets/styles/choices.min.css'])
-@endsection
+@endpush
 
 @section('content')
     <div class="card">

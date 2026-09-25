@@ -1,7 +1,7 @@
 @extends('layouts.vertical', ['title' => 'View Team Member','subTitle' => 'View Team Member'])
-@section('css')
+@push('css')
     @vite('resources/css/team-members.css')
-@endsection
+@endpush
 @section('content')
     @php
         $member_photo = asset('images/users/dummy-avatar.jpg');

@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-lg-4">
             <div class="mb-3">
-                <label for="user_name" class="form-label">User Name</label>
+                <label for="user_name" class="form-label">User Name <span class="text-danger">*</span></label>
                 <input type="text" id="user_name" name="user_name"
                        class="form-control @error('user_name') is-invalid @enderror"
                        autocomplete="off"
@@ -21,7 +21,7 @@
         <div class="col-lg-4">
             <div class="mb-3">
                 <label for="role" class="form-label">Role <span
-                                            class="text-danger">*</span></label>
+                        class="text-danger">*</span></label>
                 <select class="form-control @error('role') is-invalid @enderror"
                         id="role" data-choices data-choices-sorting-false
                         data-placeholder="Select Role" name="role">
@@ -43,7 +43,8 @@
         </div>
         <div class="col-lg-4">
             <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
+                <label for="password" class="form-label">Password @empty($admin_data)<span
+                        class="text-danger">*</span> @endempty</label>
                 <input type="password" id="password" name="password"
                        class="form-control @error('password') is-invalid @enderror"
                        autocomplete="off">

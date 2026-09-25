@@ -292,6 +292,8 @@ $(document).ready(function () {
             email: {
                 required: true,
                 strictEmail: true,
+                minlength: 8,
+                maxlength: 250,
                 remote: {
                     url: empEmailUniqueCheckUrl,
                     type: "get",

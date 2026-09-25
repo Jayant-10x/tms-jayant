@@ -3,7 +3,7 @@
 @endphp
 @extends('layouts.vertical', ['title' => ($mode == 'add'? 'Add' : 'Edit').' '.$callee_title])
 
-@section('css')
+@push('css')
     <style>
         .filepond {
             height: 210px !important;
@@ -11,7 +11,7 @@
         }
     </style>
     @vite(['node_modules/choices.js/public/assets/styles/choices.min.css'])
-@endsection
+@endpush
 
 @section('content')
     <div class="card">
@@ -52,7 +52,8 @@
                                             class="text-danger">*</span></label>
                                     <select class="form-control @error('status') is-invalid @enderror"
                                             id="status" data-choices data-choices-sorting-false
-                                            data-placeholder="Select Status" name="status" @if(!empty($admin_data) && get_logged_in_user_id() == $admin_data->adm_id) disabled @endif>
+                                            data-placeholder="Select Status" name="status"
+                                            @if(!empty($admin_data) && get_logged_in_user_id() == $admin_data->adm_id) disabled @endif>
 
                                         <option value="" @selected(old('status', $admin_data->adm_status ?? '') == '')>
                                             Select Status
@@ -88,8 +89,8 @@
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="password" class="form-label">Password <span
-                                            class="text-danger">*</span></label>
+                                    <label for="password" class="form-label">Password @empty($admin_data)<span
+                                            class="text-danger">*</span> @endempty</label>
                                     <input type="password" id="password" name="password"
                                            class="form-control @error('password') is-invalid @enderror"
                                            autocomplete="off">
@@ -197,15 +198,11 @@
                         required: true,
                         minlength: 6,
                         maxlength: 20,
-                        usernameRule:true
+                        usernameRule: true
                     },
                     status: {
                         required: function () {
-                            @if(!empty($admin_data) && get_logged_in_user_id() != $admin_data->adm_id)
-                                return true;
-                            @else
-                                return false;
-                            @endif
+                            return {{!(!empty($admin_data) && get_logged_in_user_id() == $admin_data->adm_id)}};
                         },
                     },
                     password: {
