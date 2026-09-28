@@ -1,12 +1,64 @@
 @extends('layouts.vertical', ['title' => 'Admin Users','subTitle' => 'Admin Users'])
 
+@push('css')
+    @vite(['node_modules/choices.js/public/assets/styles/choices.min.css'])
+@endpush
 @section('content')
     <div class="row">
         <div class="col-xl-12">
             <div class="card">
-                {{--<div class="card-header d-flex justify-content-between align-items-center border-bottom">
-                    <!--Filters-->
-                </div>--}}
+                <div class="card-header justify-content-between align-items-center border-bottom">
+                    <form action="{{route('admin_user_module.list')}}" method="get">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="adm_name" class="form-label">Name</label>
+                                <input type="text" id="adm_name" name="adm_name"
+                                       class="form-control"
+                                       autocomplete="off"
+                                       value="{{ request('adm_name') }}">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="adm_username" class="form-label">Username</label>
+                                <input type="text" id="adm_username" name="adm_username"
+                                       class="form-control"
+                                       autocomplete="off"
+                                       value="{{ request('adm_username') }}">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="adm_status" class="form-label">Status</label>
+                                <select class="form-control"
+                                        id="adm_status" data-choices data-choices-sorting-false
+                                        data-placeholder="Select Status" name="adm_status">
+
+                                    <option value="" @selected(request('adm_status') === null || request('adm_status') === '')>
+                                        Select Status
+                                    </option>
+
+                                    <option value="1" @selected(request('adm_status') === '1')>
+                                        Active
+                                    </option>
+
+                                    <option value="0" @selected(request('adm_status') === '0')>
+                                        Inactive
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 mt-4">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        {!! generate_filter_search_button() !!}
+                                    </div>
+                                    @if(!empty($filter_arr))
+                                        <div class="col-md-3">
+                                            {!! generate_filter_clear_button(route('admin_user_module.list')) !!}
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
                 <div class="card-body p-0">
                     @if(!empty($all_users) && count($all_users) > 0)
                         <div class="table-responsive">

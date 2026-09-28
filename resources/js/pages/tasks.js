@@ -78,9 +78,12 @@ $(document).ready(function () {
     updateChecklistProgress();
     updateChecklistText();
 
-    $('#addSubTask').on('click', function () {
-        if (_subTaskNode === '') {
+    $(document).on('click', '#addSubTask', function () {
+        if (_subTaskNode.val().trim() === '') {
             return;
+        }
+        if (_subTaskNode.val().trim().length < 2) {
+            return showNotification('Please enter at least 2 characters.', 'error');
         }
         if (_subTaskNode)
             $.ajax({
@@ -107,16 +110,29 @@ $(document).ready(function () {
                         </span>
                     </div>
 
-                    <div class="col-md-1 pb-2">
-                        <a href="javascript:void(0);" class="delete-sub-task"
-                           data-bs-toggle="tooltip"
+
+                    <div class="col-md-1 pb-2 d-flex g-0">
+                        <span data-bs-toggle="tooltip"
+                              data-bs-placement="top"
+                              data-bs-title="View History">
+                            <a href="javascript:void(0);"
+                               class="custom-pop-up-view-modal"
+                               data-bs-section=sub_task_history
+                               data-bs-mode=sub_task_history_mode
+                               data-bs-primary-id="${subTaskData.pst_id}"
+                               data-bs-toggle="modal" data-bs-target="#viewModalPopup">
+                                <iconify-icon
+                                    icon="solar:history-broken"
+                                    class="align-middle fs-16 fw-bold text-black"></iconify-icon>
+                            </a>
+                        </span>
+                        <a href="javascript:void(0);" data-bs-toggle="tooltip"
                            data-bs-placement="top"
                            data-bs-title="Delete"
-                           data-sub_task_id="${subTaskData.pst_id}">
-
+                           data-sub_task_id="${subTaskData.pst_id}"
+                           class="delete-sub-task ms-3">
                             <iconify-icon icon="solar:trash-bin-trash-broken"
-                                          class="align-middle fs-16 fw-bold text-danger">
-                            </iconify-icon>
+                                          class="align-middle fs-16 fw-bold text-danger"></iconify-icon>
                         </a>
                     </div>`;
 
@@ -124,7 +140,7 @@ $(document).ready(function () {
 
                         // Clear input
                         _subTaskNode.val('');
-
+                        updateChecklistProgress()
                         showNotification(response.message, 'success');
                     } else {
                         showNotification(response.message, 'error');

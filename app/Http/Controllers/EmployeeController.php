@@ -12,8 +12,36 @@ use Illuminate\Validation\Rule;
 
 class EmployeeController extends Controller {
     public function index(Request $request) {
-        $all_employees = Employee::paginate(config('constants.PER_PAGE_ITEM_COUNT'))->withQueryString();
-        return view('employees.list', compact('all_employees'));
+        $filter_arr = [];
+        $employeeBaseQuery = Employee::query();
+
+        if ($request->filled('emp_name')) {
+            $employeeBaseQuery->where('emp_full_name', 'like', '%' . $request->emp_name . '%');
+            $filter_arr = ['emp_full_name' => $request->emp_name];
+        }
+
+        if ($request->filled('emp_email')) {
+            $employeeBaseQuery->where('emp_email', 'like', '%' . $request->emp_email . '%');
+            $filter_arr = ['emp_email' => $request->emp_email];
+        }
+
+        if ($request->filled('emp_dept')) {
+            $employeeBaseQuery->where('emp_department', '=', $request->emp_dept);
+            $filter_arr = ['emp_department' => $request->emp_department];
+        }
+
+        if ($request->filled('emp_sub_dept')) {
+            $employeeBaseQuery->where('emp_sub_department', '=', $request->emp_sub_dept);
+            $filter_arr = ['emp_sub_department' => $request->emp_sub_dept];
+        }
+
+        if ($request->filled('emp_status')) {
+            $employeeBaseQuery->where('emp_status', '=', $request->emp_status);
+            $filter_arr = ['emp_status' => $request->emp_status];
+        }
+
+        $all_employees = $employeeBaseQuery->paginate(config('constants.PER_PAGE_ITEM_COUNT'))->withQueryString();
+        return view('employees.list', compact('all_employees', 'filter_arr'));
     }
 
     public function add(Request $request) {

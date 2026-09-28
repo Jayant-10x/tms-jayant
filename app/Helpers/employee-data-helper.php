@@ -68,6 +68,14 @@ function get_logged_in_user_role() {
     return Auth::user()?->adm_role;
 }
 
+function get_logged_in_emp_designation() {
+    $designation = 'admin';
+    if (!is_admin()) {
+        $designation = get_employee_data(get_logged_in_user_emp_id())['emp_designation'];
+    }
+    return $designation;
+}
+
 if (!function_exists('getEmployeeChildren')) {
 
     /**

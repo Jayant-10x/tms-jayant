@@ -161,7 +161,8 @@
                     <!-- User -->
                     <div class="user-info overflow-hidden ms-3">
                         <h6 class="mb-0 text-truncate text-dark fw-semibold fs-14">
-                            {{ implode(' ', array_slice(explode(' ', trim(Auth::user()->adm_name ?? '')), 0, 2)) }}
+                            {{Auth::user()->adm_name}}
+                            {{--{{ implode(' ', array_slice(explode(' ', trim(Auth::user()->adm_name ?? '')), 0, 3)) }}--}}
                         </h6>
                         <small class="text-info text-truncate d-block fs-12">
                             {{ \App\Enums\UserRoleEnum::from(Auth::user()->adm_role ?? '')->label() }}

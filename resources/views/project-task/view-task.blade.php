@@ -4,15 +4,16 @@
 @endpush
 @section('content')
     @php
-        $all_permission = (get_logged_in_user_role() == \App\Enums\UserRoleEnum::MANAGER->value && permission_can('all_tasks', 'edit')) || is_admin();
+        $all_permission = (get_logged_in_user_role() == \App\Enums\UserRoleEnum::MANAGER->value && (permission_can('all_tasks', 'edit') || permission_can('team_tasks', 'edit'))) || is_admin();
         $employee_permission = get_logged_in_user_role() == \App\Enums\UserRoleEnum::EMPLOYEE->value && permission_can('all_my_tasks', 'edit');
+        $loggedInUserId = get_logged_in_user_emp_id();
     @endphp
     <div class="row align-items-center">
         <div class="col-md-8">
             <span
                 style="font-size: 17px; font-weight: 450; color: #454446f2 !important;">{{$task_data->prt_title}}</span>
         </div>
-        @if($all_permission || $employee_permission)
+        @if($all_permission || ($employee_permission && in_array($loggedInUserId, $project_task_assignee)))
             <div class="col-md-4">
                 <div class="row justify-content-end">
                     <div class="col-md-8">
@@ -154,26 +155,52 @@
                             </p>
 
                             <div class="row p-2" id="task-attachments-container">
-                                @foreach($task_data->prt_attachments ?? [] as $attachment)
-                                    <div class="col-md-12 attachment-files m-1">
-                                        <div class="row">
-                                            <div class="col-md-11">
-                                                {{$attachment}}
-                                            </div>
-                                            <div class="col-md-1">
-                                                <a href="{{ asset('storage/task_attachments/'.$attachment) }}"
-                                                   download="{{ $attachment }}" data-bs-toggle="tooltip"
-                                                   data-bs-title="Download" class="attachment-download">
-                                                    <iconify-icon icon="solar:download-linear"
-                                                                  class="align-middle fs-14 fw-bold">
+                                @if(!empty($task_data->prt_attachments))
+                                    @foreach($task_data->prt_attachments as $attachment)
+                                        @php
+                                            $uploader_data = get_employee_data($attachment['uploaded_by']);
+
+                                            $uploader_info_content = '<div class="row">
+                                                    <div class="col-md-5 fw-bold">Uploaded By : </div>
+                                                    <div class="col-md-7">' . $uploader_data['emp_full_name'] . ' (' . $uploader_data['emp_designation']->label() . ')</div>
+                                                 </div>
+                                                 <div class="row">
+                                                    <div class="col-md-5 fw-bold">Uploaded On: </div>
+                                                    <div class="col-md-7">' . get_date_time_format($attachment['uploaded_on'], 'd-m-Y H:i:s') . '</div>
+                                                 </div>';
+                                        @endphp
+                                        <div class="col-md-12 attachment-files m-1">
+                                            <div class="row">
+                                                <div class="col-md-10">
+                                                    {{$attachment['file_name']}}
+                                                </div>
+                                                <div class="col-md-1 text-end">
+                                                    <iconify-icon icon="solar:info-square-linear"
+                                                                  class="align-middle fs-14 text-black" tabindex="0" data-bs-toggle="popover"
+                                                                  data-bs-trigger="hover"
+                                                                  data-bs-html="true"
+                                                                  data-bs-content="{{$uploader_info_content}}"
+                                                                  title="Attachment Info.">
                                                     </iconify-icon>
-                                                </a>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <a href="{{ asset('storage/task_attachments/'.$attachment['file_name']) }}"
+                                                       download="{{ $attachment['file_name'] }}"
+                                                       data-bs-toggle="tooltip"
+                                                       data-bs-title="Download" class="attachment-download">
+                                                        <iconify-icon icon="solar:download-linear"
+                                                                      class="align-middle fs-14 text-black">
+                                                        </iconify-icon>
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                @endforeach
+                                    @endforeach
+                                @else
+                                    {!! generate_no_record_html('No Attachments Found.', class:'p-0') !!}
+                                @endif
                             </div>
-                            @if($all_permission || $employee_permission)
+                            @if($all_permission || ($employee_permission && in_array($loggedInUserId, $project_task_assignee)))
                                 <div class="row">
                                     <div class="col-md-3">
                                         <input type="file" id="task_attachment" name="runtime_task_attachment"
@@ -320,7 +347,8 @@
                                 </div>
                                 <div class="col-md-12 mb-1">
                                     <iconify-icon icon="solar:clock-circle-broken"
-                                                  class="align-middle fs-4" style="color: rgb(95 68 255) !important;"></iconify-icon>
+                                                  class="align-middle fs-4"
+                                                  style="color: rgb(95 68 255) !important;"></iconify-icon>
                                     <span class="assignee-name text-dark">
                                 {{ $task_data->prt_est_hours }}h
                             </span>
@@ -340,6 +368,8 @@
     <script>
         let task_id = '{{my_encrypt($task_data->prt_id)}}';
         let is_admin = '{{is_admin()}}';
+        let sub_task_history = '{{my_encrypt('sub-task-history', true)}}';
+        let sub_task_history_mode = '{{my_encrypt('view', true)}}';
     </script>
     @vite(['resources/js/pages/tasks.js' ])
 @endpush

@@ -1,10 +1,81 @@
 @extends('layouts.vertical', ['title' => 'Employees','subTitle' => 'Employees'])
 
+@push('css')
+    @vite(['node_modules/choices.js/public/assets/styles/choices.min.css'])
+@endpush
 @section('content')
     <div class="card">
-        {{--<div class="card-header d-flex justify-content-between align-items-center border-bottom">
-            <!--Filters-->
-        </div>--}}
+        <div class="card-header justify-content-between align-items-center border-bottom">
+            <form action="{{route('employees.list')}}" method="get">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label for="emp_name" class="form-label">Name</label>
+                        <input type="text" id="emp_name" name="emp_name"
+                               class="form-control"
+                               autocomplete="off"
+                               value="{{ request('emp_name') }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="emp_email" class="form-label">Email</label>
+                        <input type="text" id="emp_email" name="emp_email"
+                               class="form-control"
+                               autocomplete="off"
+                               value="{{ request('emp_email') }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="emp_dept" class="form-label">Department</label>
+                        <select class="form-control"
+                                id="emp_dept" data-choices data-choices-sorting-false
+                                data-placeholder="Select Department" name="emp_dept">
+                            <option value="">Select Department</option>
+                            @foreach(\App\Enums\DepartmentsEnum::all_departments() AS $department)
+                                <option value="{{$department->value}}"
+                                    @selected(request('emp_dept') === $department->value)>{{$department->label()}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="emp_sub_dept" class="form-label">Sub Department</label>
+                        <select id="emp_sub_dept" name="emp_sub_dept"
+                                class="form-control" data-choices data-choices-sorting-false
+                                data-placeholder="Select Sub Department">
+                            <option value="">Select Sub Department</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="emp_status" class="form-label">Status</label>
+                        <select class="form-control"
+                                id="emp_status" data-choices data-choices-sorting-false
+                                data-placeholder="Select Status" name="emp_status">
+
+                            <option value="" @selected(request('emp_status') === null || request('emp_status') === '')>
+                                Select Status
+                            </option>
+
+                            <option value="1" @selected(request('emp_status') === '1')>
+                                Active
+                            </option>
+
+                            <option value="0" @selected(request('emp_status') === '0')>
+                                Inactive
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mt-4">
+                        <div class="row">
+                            <div class="col-md-3">
+                                {!! generate_filter_search_button() !!}
+                            </div>
+                            @if(!empty($filter_arr))
+                                <div class="col-md-3">
+                                    {!! generate_filter_clear_button(route('employees.list')) !!}
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
         <div class="card-body p-0">
             @if(!empty($all_employees) && count($all_employees) > 0)
                 <div class="table-responsive">
@@ -14,8 +85,8 @@
                             <th>Sr. no.</th>
                             <th width="20%">Employee Photo & Name</th>
                             <th width="10%">Email</th>
-                            <th width="12%">Contact</th>
                             <th width="15%">Department</th>
+                            <th width="12%">Sub Department</th>
                             <th>Status</th>
                             <th>Created On</th>
                             <th>Action</th>
@@ -48,8 +119,8 @@
 
                                 </td>
                                 <td>{{$employee->emp_email}}</td>
-                                <td>{{$employee->emp_phone_number}}</td>
                                 <td>{{$employee->emp_department?->label() ?? '-' }}</td>
+                                <td>{{$employee->emp_sub_department?->label() ?? '-' }}</td>
                                 <td>{!! generate_status_html($employee->emp_status) !!}</td>
                                 <td>{{get_date_time_format($employee->emp_created_on)}}</td>
                                 <td>
@@ -76,3 +147,10 @@
 @section('module-right-section')
     {!! generate_add_button(route('employees.add'), title:' Employee', text: ' Employee') !!}
 @endsection
+
+@push('script')
+    <script>
+        $(document).ready(function () {
+        });
+    </script>
+@endpush

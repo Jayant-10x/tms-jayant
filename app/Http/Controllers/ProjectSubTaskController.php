@@ -65,7 +65,7 @@ class ProjectSubTaskController extends Controller {
     }
 
     public function addSubTask(Request $request, $prt_id) {
-        if(get_logged_in_user_role() != UserRoleEnum::EMPLOYEE->value){
+        if (get_logged_in_user_role() == UserRoleEnum::EMPLOYEE->value) {
             return response()->json(['status' => false, 'message' => 'You are not authorized to perform this action.'], 403);
         }
 

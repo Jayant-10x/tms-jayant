@@ -13,8 +13,26 @@ use Illuminate\Support\Str;
 class AdminUserController extends Controller {
 
     public function allAdminUsers(Request $request) {
-        $all_users = AdminUser::query()->where('adm_role', '=', UserRoleEnum::ADMIN->value)->paginate(config('constants.PER_PAGE_ITEM_COUNT'))->withQueryString();
-        return view('admin-user.all-admin-user', compact('all_users'));
+        $filter_arr = [];
+
+        $adminBaseQuery = AdminUser::query();
+        if ($request->filled('adm_name')) {
+            $adminBaseQuery->where('adm_name', 'like', '%' . $request->adm_name . '%');
+            $filter_arr = ['adm_name' => $request->adm_name];
+        }
+
+        if ($request->filled('adm_username')) {
+            $adminBaseQuery->where('adm_user_name', 'like', '%' . $request->adm_username . '%');
+            $filter_arr = ['adm_username' => $request->adm_username];
+        }
+
+        if ($request->filled('adm_status')) {
+            $adminBaseQuery->where('adm_status', '=', $request->adm_status);
+            $filter_arr = ['adm_status' => $request->adm_status];
+        }
+
+        $all_users = $adminBaseQuery->where('adm_role', '=', UserRoleEnum::ADMIN->value)->paginate(config('constants.PER_PAGE_ITEM_COUNT'))->withQueryString();
+        return view('admin-user.all-admin-user', compact('all_users', 'filter_arr'));
     }
 
     public function store(Request $request, $emp_id) {

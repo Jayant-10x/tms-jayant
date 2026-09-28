@@ -119,7 +119,7 @@
     @endif
 @endsection
 
-@if(/*!is_admin() && get_logged_in_user_role() == 'manager' && */permission_can('projects', 'add'))
+@if(/*!is_admin() && get_logged_in_user_role() == 'manager' && */!is_admin() && permission_can('projects', 'add'))
     @section('module-right-section')
         {!! generate_add_button(route('projects.add'), title:' Project', text: ' Project') !!}
     @endsection

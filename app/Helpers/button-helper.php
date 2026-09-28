@@ -28,6 +28,17 @@ if (!function_exists('generate_add_button')) {
         return sprintf(config('buttons.add_new'), $url, $class, $title, $text);
     }
 }
+if (!function_exists('generate_filter_search_button')) {
+    function generate_filter_search_button(): string {
+        return config('buttons.filter_search_btn');
+    }
+}
+
+if (!function_exists('generate_filter_clear_button')) {
+    function generate_filter_clear_button($url): string {
+        return sprintf(config('buttons.filter_close_btn'), $url);
+    }
+}
 
 if (!function_exists('generate_submit_reset_button')) {
     function generate_submit_reset_button(): string {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\DepartmentsEnum;
+use App\Enums\DesignationEnum;
 use App\Enums\ProjectStatus;
 use App\Models\Employee;
 use App\Models\Project;
@@ -121,8 +122,14 @@ class AjaxController extends Controller {
 
     private function getCreateTaskFormViaAjax($mode) {
         if ($mode == 'add') {
-            $team_members = get_employee_children_in_depth((int)get_logged_in_user_emp_id());
-            $projects = Project::query()->select('pro_id', 'pro_name')->where('pro_status', '=', ProjectStatus::ACTIVE->value)->get()->pluck('pro_name', 'pro_id')->toArray();
+            $team_members = get_employee_children_in_depth((int)get_logged_in_user_emp_id(), depth: config('constants.DEFAULT_DEPTH'));
+            $projectBaseQuery = Project::query()->select('pro_id', 'pro_name')->where('pro_status', '=', ProjectStatus::ACTIVE->value);
+            if (get_logged_in_emp_designation() == DesignationEnum::MANAGER) {
+                $projectBaseQuery->whereIn('pro_manager', array_column($team_members, 'emp_id'));
+            } else {
+                $projectBaseQuery->where('pro_manager', '=', get_logged_in_user_emp_id());
+            }
+            $projects = $projectBaseQuery->get()->pluck('pro_name', 'pro_id')->toArray();
             $data = view('project-task.add-project-task', compact('team_members', 'projects'))->render();
         } else {
             $data = '';

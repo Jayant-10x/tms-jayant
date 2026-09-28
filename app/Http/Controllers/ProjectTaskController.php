@@ -224,11 +224,17 @@ class ProjectTaskController extends Controller {
             DB::beginTransaction();
             if ($request->hasFile('attachments')) {
                 foreach ($request->file('attachments') as $file) {
+                    $loggedInUser = get_logged_in_user_emp_id();
+
                     $originalNameOnly = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
                     $extension = $file->getClientOriginalExtension();
                     $uniqueName = $originalNameOnly . '_' . time() . '.' . $extension;
                     $file->storeAs('task_attachments', $uniqueName, 'public');
-                    $fileNames[] = $uniqueName;
+                    $fileNames[] = [
+                        'file_name' => $uniqueName,
+                        'uploaded_by' => $loggedInUser,
+                        'uploaded_on' => $current_date,
+                    ];
                 }
             }
 
@@ -274,19 +280,26 @@ class ProjectTaskController extends Controller {
         $prt_id = my_decrypt($prt_id);
         $task_data = ProjectTask::query()->with(['subTasks:pst_id,pst_prt_id,pst_title,pst_is_done', 'projectTaskAssignments:pta_prt_id,pta_assign_by,pta_assign_to', 'project:pro_id,pro_name', 'projectTaskAssignments.projectTaskAssignTo:emp_id,emp_full_name', 'projectTaskAssignments.projectTaskAssignedBy:emp_id,emp_full_name'])->where('prt_id', '=', $prt_id)->first();
 
-        $task_assignees = [];
-        $task_assigned_by = [];
-        if (!empty($task_data->projectTaskAssignments)) {
-            foreach ($task_data->projectTaskAssignments as $task_assignment) {
-                if (!in_array($task_assignment->projectTaskAssignTo->emp_id, array_keys($task_assignees))) {
-                    $task_assignees[$task_assignment->projectTaskAssignTo->emp_id] = $task_assignment->projectTaskAssignTo->emp_full_name;
-                }
-                if (count($task_assigned_by) == 0) {
-                    $task_assigned_by[$task_assignment->projectTaskAssignedBy->emp_id] = $task_assignment->projectTaskAssignedBy->emp_full_name;
+        if (!empty($task_data)) {
+            $task_assignees = [];
+            $task_assigned_by = [];
+            if (!empty($task_data->projectTaskAssignments)) {
+                foreach ($task_data->projectTaskAssignments as $task_assignment) {
+                    if (!in_array($task_assignment->projectTaskAssignTo->emp_id, array_keys($task_assignees))) {
+                        $task_assignees[$task_assignment->projectTaskAssignTo->emp_id] = $task_assignment->projectTaskAssignTo->emp_full_name;
+                    }
+                    if (count($task_assigned_by) == 0) {
+                        $task_assigned_by[$task_assignment->projectTaskAssignedBy->emp_id] = $task_assignment->projectTaskAssignedBy->emp_full_name;
+                    }
                 }
             }
+            $project_task_assignee = !empty($task_assignees) ? array_keys($task_assignees) : [];
+
+            return view('project-task.view-task', compact('prt_id', 'task_data', 'task_assignees', 'task_assigned_by', 'called_from', 'project_task_assignee'));
+        } else {
+            abort('404');
         }
-        return view('project-task.view-task', compact('prt_id', 'task_data', 'task_assignees', 'task_assigned_by', 'called_from'));
+
     }
 
     public function updateTaskStatus(Request $request, $prt_id) {
@@ -343,7 +356,11 @@ class ProjectTaskController extends Controller {
         if (!is_array($attachments)) {
             $attachments = [];
         }
-        $attachments[] = $fileName;
+        $attachments[] = [
+            'file_name' => $fileName,
+            'uploaded_by' => get_logged_in_user_emp_id(),
+            'uploaded_on' => date(config('constants.DB_DATE_TIME_FORMAT')),
+        ];
         $task->prt_attachments = $attachments;
         $task->save();
 

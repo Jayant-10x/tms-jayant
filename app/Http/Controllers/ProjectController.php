@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\DesignationEnum;
 use App\Enums\ProjectStatus;
 use App\Enums\TaskStatus;
 use App\Enums\UserRoleEnum;
@@ -19,19 +20,39 @@ class ProjectController extends Controller {
         $allProjectQuery = Project::query();
         $allProjectQuery->with('tasks');
         if (!is_admin()) {
-            $allProjectQuery->whereExists(function ($query) use ($loggedInUser) {
-                $query->select(DB::raw(1))
-                    ->from('project_tasks')
-                    ->join('project_task_assignments', 'project_tasks.prt_id', '=', 'project_task_assignments.pta_prt_id')
-                    ->whereColumn('project_tasks.prt_pro_id', 'projects.pro_id')
-                    ->where('project_task_assignments.pta_assign_to', '=', $loggedInUser);
-            })->where('pro_status', '=', ProjectStatus::ACTIVE->value);
-            /*if (get_logged_in_user_role() == UserRoleEnum::MANAGER->value) {
-                $allProjectQuery->where('pro_manager', '=', $loggedInUser)
-                    ->with(['tasks.projectTaskAssignments.projectTaskAssignTo:emp_id,emp_full_name']);
-            } else {
+            $allProjectQuery
+                ->where('pro_status', ProjectStatus::ACTIVE->value)
+                ->where(function ($query) use ($loggedInUser) {
+                    // User is the project manager
+                    $query->where('pro_manager', $loggedInUser)
+                        // OR user is assigned to a task of this project
+                        ->orWhereExists(function ($subQuery) use ($loggedInUser) {
+                            $subQuery->select(DB::raw(1))
+                                ->from('project_tasks')
+                                ->join('project_task_assignments', 'project_tasks.prt_id', '=', 'project_task_assignments.pta_prt_id')
+                                ->whereColumn('project_tasks.prt_pro_id', 'projects.pro_id')
+                                ->where('project_task_assignments.pta_assign_to', $loggedInUser);
+                        });
 
-            }*/
+                    if (get_logged_in_user_role() === UserRoleEnum::MANAGER->value) {
+                        $teamMembers = get_employee_children_in_depth($loggedInUser);
+                        if (!empty($teamMembers)) {
+                            $teamMemberIds = array_column($teamMembers, 'emp_id');
+
+                            if (get_logged_in_emp_designation() == DesignationEnum::MANAGER) {
+                                $query->orWhereIn('pro_manager', $teamMemberIds);
+                            }
+                            if (get_logged_in_emp_designation() == DesignationEnum::TL) {
+                                $query->orWhereExists(function ($subQuery) use ($teamMemberIds) {
+                                    $subQuery->select(DB::raw(1))->from('project_tasks')
+                                        ->join('project_task_assignments', 'project_tasks.prt_id', '=', 'project_task_assignments.pta_prt_id')
+                                        ->whereColumn('project_tasks.prt_pro_id', 'projects.pro_id')
+                                        ->whereIn('project_task_assignments.pta_assign_to', $teamMemberIds);
+                                });
+                            }
+                        }
+                    }
+                });
         }
         $all_projects = $allProjectQuery->paginate(config('constants.PER_PAGE_ITEM_COUNT'))->withQueryString();
         return view('projects.all-projects', compact('all_projects'));
@@ -44,13 +65,14 @@ class ProjectController extends Controller {
 
     public function viewProject($pro_id) {
         $pro_id = my_decrypt($pro_id);
-        $project_manager = $project_team = [];
+        $project_manager = $project_team = $project_task_assignee = [];
         $prefix = config('constants.TABLE_PREFIX');
 
         $project_data = Project::query()->where('pro_id', '=', $pro_id)->first()->toArray();
 
         // 1. Build the base query
         $projectTaskQuery = ProjectTask::query()
+            ->with('projectTaskAssignments')
             ->select('project_tasks.*', DB::raw('(
                 SELECT GROUP_CONCAT(
                     DISTINCT ' . $prefix . 'employees.emp_full_name
@@ -66,18 +88,23 @@ class ProjectController extends Controller {
             ) AS assignees'))
             ->where('prt_pro_id', '=', $pro_id);
 
-            // 2. Conditionally filter if the logged-in user is an employee
+        // 2. Conditionally filter if the logged-in user is an employee
         if (get_logged_in_user_role() === 'employee') {
             $loggedInUserId = get_logged_in_user_id();
-            $projectTaskQuery->whereIn('prt_id', function ($subQuery) use ($prefix, $loggedInUserId) {
+            $projectTaskQuery->whereIn('prt_id', function ($subQuery) use ($loggedInUserId) {
                 $subQuery->select('pta_prt_id')
-                    ->from($prefix . 'project_task_assignments')
+                    ->from('project_task_assignments')
                     ->where('pta_assign_to', '=', $loggedInUserId);
             });
         }
         $project_tasks = $projectTaskQuery->paginate(config('constants.PER_PAGE_ITEM_COUNT'))->withQueryString();
 
-        $project_task_assignee = $project_tasks->projectTaskAssignments->pluck('pta_assign_to')->toArray();
+        if (count($project_tasks) > 0) {
+            $project_task_assignee = $project_tasks->getCollection()
+                ->flatMap(function ($task) {
+                    return $task->projectTaskAssignments->pluck('pta_assign_to');
+                })->unique()->values()->toArray();
+        }
 
         $project_team = ProjectTask::query()->select('pta_assign_to as team_member_emp_id', 'employees.emp_full_name', 'employees.emp_designation', 'employees.emp_photo')->join('project_task_assignments', 'project_tasks.prt_id', '=', 'project_task_assignments.pta_prt_id')->join('employees', 'employees.emp_id', '=', 'project_task_assignments.pta_assign_to')->where([['prt_pro_id', '=', $pro_id], ['project_task_assignments.pta_assign_to', '!=', $project_data['pro_manager']]])->distinct('employees.emp_id')->paginate(config('constants.PER_PAGE_ITEM_COUNT'))->withQueryString();
         if (!empty($project_data['pro_manager'])) {

@@ -22,4 +22,7 @@ return [
     'edit_ajax_btn' => '<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edit %1$s"><button type="button" %2$s class="btn btn-soft-primary btn-sm rounded %3$s" data-bs-title="%4$s" data-bs-toggle="modal" data-bs-target="#addEditModalPopup"><iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon> %5$s</button></span>',
 
     'view_ajax_btn' => '<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="View %1$s"><button type="button" %2$s class="btn btn-soft-warning btn-sm rounded %3$s" data-bs-title="%4$s" data-bs-toggle="modal" data-bs-target="#viewModalPopup"><iconify-icon icon="solar:eye-broken" class="align-middle fs-18"></iconify-icon> %5$s</button></span>',
+
+    'filter_search_btn' => '<button type="submit" class="btn btn-success w-100 btn-sm rounded"><iconify-icon icon="solar:magnifier-linear" class="align-middle fs-18"></iconify-icon></button>',
+    'filter_close_btn' => '<a href="%s" class="btn btn-danger w-100 btn-sm rounded"><iconify-icon icon="solar:close-bold" class="align-middle fs-18"></iconify-icon></a>',
 ];
