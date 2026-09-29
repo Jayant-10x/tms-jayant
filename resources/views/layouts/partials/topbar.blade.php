@@ -165,7 +165,10 @@
                             {{--{{ implode(' ', array_slice(explode(' ', trim(Auth::user()->adm_name ?? '')), 0, 3)) }}--}}
                         </h6>
                         <small class="text-info text-truncate d-block fs-12">
-                            {{ \App\Enums\UserRoleEnum::from(Auth::user()->adm_role ?? '')->label() }}
+                            @php
+                                $logged_in_designation = !is_admin() ? get_logged_in_emp_designation()->label() : \App\Enums\UserRoleEnum::ADMIN->label();
+                            @endphp
+                            {{ $logged_in_designation }}
                         </small>
                     </div>
                     <div class="dropdown topbar-item">
@@ -181,7 +184,8 @@
                                 }
                             @endphp
                             <span class="d-flex align-items-center">
-                                   <img class="rounded-circle object-fit-cover" width="32" height="32" src="{{$profile_pic}}">
+                                   <img class="rounded-circle object-fit-cover" width="32" height="32"
+                                        src="{{$profile_pic}}">
                                  {!! user_online_status_dot(Auth::user()->adm_id, 'width: 10px !important; height: 10px !important; bottom: 7px; right: 7px;') !!}
                               </span>
                         </a>

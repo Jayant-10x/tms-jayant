@@ -78,9 +78,9 @@ Route::middleware('auth')->group(function () {
     Route::get('team-member/view/{called_from}/{member_id}/{pro_id?}', [TeamMembersController::class, 'viewTeamMember'])->middleware('permission:team_members.view')->name('team_member.view');
 
     Route::get('projects/', [ProjectController::class, 'index'])->middleware('permission:projects.view')->name('projects.list');
-    Route::get('projects/add', [ProjectController::class, 'addProject'])->middleware('permission:projects.add')->name('projects.add');
-    Route::post('projects/save', [ProjectController::class, 'saveProject'])->middleware('permission:projects.add')->name('projects.save');
-    Route::get('projects/view/{pro_id}', [ProjectController::class, 'viewProject'])->middleware('permission:projects.view')->name('project.view');
+    Route::get('project/add', [ProjectController::class, 'addProject'])->middleware('permission:projects.add')->name('projects.add');
+    Route::post('project/save', [ProjectController::class, 'saveProject'])->middleware('permission:projects.add')->name('projects.save');
+    Route::get('project/view/{pro_id}', [ProjectController::class, 'viewProject'])->middleware('permission:projects.view')->name('project.view');
     Route::post('/update-project-status/{pro_id}', [ProjectController::class, 'updateProjectStatus'])->middleware('permission:projects.edit')->name('update_project_status_via_ajax');
 
 
