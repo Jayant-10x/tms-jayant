@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/show-modal-popup/view', [AjaxController::class, 'getViewPopUpsPage']);
     Route::get('/check-unique-emp-internal-id', [AjaxController::class, 'checkUniqueEmpInternalId'])->name('check_unique_emp_internal_id_via_ajax');
     Route::get('/check-unique-emp-email', [AjaxController::class, 'checkUniqueEmpEmail'])->name('check_unique_emp_email_via_ajax');
+    Route::get('/check-unique-emp-phone', [AjaxController::class, 'checkUniqueEmpPhone'])->name('check_unique_emp_phone_via_ajax');
 
     Route::get('/notifications/{notification}/handle', [NotificationController::class, 'handle']
     )->name('notifications.handle');

@@ -175,4 +175,14 @@ class AjaxController extends Controller {
         $isExist = $isExistQuery->exists();
         return response()->json(!$isExist);
     }
+
+    public function checkUniqueEmpPhone(Request $request) {
+        $mode = my_decrypt($request->mode, true);
+        $isExistQuery = Employee::query()->where('emp_phone_number', '=', $request->phone_number);
+        if ($mode == 'edit') {
+            $isExistQuery->where('emp_id', '!=', my_decrypt($request->emp_id));
+        }
+        $isExist = $isExistQuery->exists();
+        return response()->json(!$isExist);
+    }
 }
