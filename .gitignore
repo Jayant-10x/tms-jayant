@@ -44,3 +44,4 @@ Homestead.yaml
 # Temporary files
 *.tmp
 *.swp
+/public/fonts-manifest.dev.json
