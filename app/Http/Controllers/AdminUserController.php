@@ -31,7 +31,7 @@ class AdminUserController extends Controller {
             $filter_arr = ['adm_status' => $request->adm_status];
         }
 
-        $all_users = $adminBaseQuery->where('adm_role', '=', UserRoleEnum::ADMIN->value)->paginate(config('constants.PER_PAGE_ITEM_COUNT'))->withQueryString();
+        $all_users = $adminBaseQuery->where('adm_role', '=', UserRoleEnum::ADMIN->value)->paginate(config('constants.PER_PAGE_ITEM_COUNT'),pageName: 'admin_users')->withQueryString();
         return view('admin-user.all-admin-user', compact('all_users', 'filter_arr'));
     }
 
@@ -55,9 +55,9 @@ class AdminUserController extends Controller {
         $admin_user->adm_created_by = setCreatedUpdatedBy();
         $admin_user->adm_created_on = $current_date;
         if ($admin_user->save()) {
-            return redirect()->back()->with('success', 'Credentials added successfully.');
+            return redirect()->route('admin_user_module.list', $request->query())->with('success', 'Credentials added successfully.');
         } else {
-            return redirect()->back()->with('error', 'Something went wrong.');
+            return redirect()->route('admin_user_module.list', $request->query())->with('error', 'Something went wrong.');
         }
     }
 
@@ -122,9 +122,9 @@ class AdminUserController extends Controller {
         $is_saved = $admin->save();
 
         if ($is_saved) {
-            return redirect(route('admin_user_module.list'))->with('success', 'Admin User added successfully.');
+            return redirect(route('admin_user_module.list', $request->query()))->with('success', 'Admin User added successfully.');
         } else {
-            return redirect(route('admin_user_module.list'))->with('error', 'Something went wrong.');
+            return redirect(route('admin_user_module.list', $request->query()))->with('error', 'Something went wrong.');
         }
     }
 
@@ -193,12 +193,12 @@ class AdminUserController extends Controller {
             if ($is_updated) {
                 Auth::setUser($admin_exist->fresh());
 //                dd(Auth::user());
-                return redirect()->back()->with('success', 'Admin User updated successfully.');
+                return redirect()->route('admin_user_module.edit', array_merge(['adm_id' => my_encrypt($adm_id)], $request->query()))->with('success', 'Admin User updated successfully.');
             } else {
-                return redirect()->back()->with('error', 'Something went wrong.');
+                return redirect()->route('admin_user_module.edit', array_merge(['adm_id' => my_encrypt($adm_id)], $request->query()))->with('error', 'Something went wrong.');
             }
         } else {
-            return redirect()->back()->with('error', 'Admin User not found.');
+            return redirect()->route('admin_user_module.edit', array_merge(['adm_id' => my_encrypt($adm_id)], $request->query()))->with('error', 'Admin User not found.');
         }
     }
 

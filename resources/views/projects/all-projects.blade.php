@@ -28,7 +28,8 @@
                 @endphp
                 <div class="col-xl-4 col-lg-6">
                     @if(permission_can('projects', 'view'))
-                        <a href="{{route('project.view', ['pro_id' => my_encrypt($project->pro_id)])}}" target="_self">
+                        <a href="{{route('project.view', array_merge(['pro_id' => my_encrypt($project->pro_id)],request()->query()))}}"
+                           target="_self">
                             @endif
                             <div class="card project-item-card">
                                 <div class="card-body">
@@ -92,6 +93,7 @@
                 </div>
             @endforeach
         </div>
+        {!! generate_pagination($all_projects,"Projects") !!}
     @else
         <div class="card">
             <div class="card-body p-0">
@@ -99,28 +101,10 @@
             </div>
         </div>
     @endif
-    @if(!empty($all_projects) && count($all_projects) > 0)
-        {{--<div class="card-footer">
-
-        </div>--}}
-        <div>
-            Showing
-            {{ $all_projects->firstItem() }}
-            to
-            {{ $all_projects->lastItem() }}
-            of
-            {{ $all_projects->total() }}
-            projects
-        </div>
-
-        <div>
-            {{ $all_projects->links() }}
-        </div>
-    @endif
 @endsection
 
 @if(/*!is_admin() && get_logged_in_user_role() == 'manager' && */!is_admin() && permission_can('projects', 'add'))
     @section('module-right-section')
-        {!! generate_add_button(route('projects.add'), title:' Project', text: ' Project') !!}
+        {!! generate_add_button(route('projects.add',request()->query()), title:' Project', text: ' Project') !!}
     @endsection
 @endif

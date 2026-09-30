@@ -48,7 +48,7 @@
                         <div class="d-flex gap-2">
                             @if(permission_can('all_my_tasks', 'view') || is_admin())
                                 <div class="d-flex gap-2">
-                                    {!! generate_view_button(route('task.view', ['prt_id' => my_encrypt($task->prt_id),'called_from' => 'projects', 'return_url' => url()->full()])) !!}
+                                    {!! generate_view_button(route('task.view', array_merge(['prt_id' => my_encrypt($task->prt_id),'called_from' => 'projects', 'return_url' => url()->full()],request()->query()))) !!}
                                 </div>
                             @endif
                             {{--{!! generate_edit_button(route('employees.edit', ['emp_id' => my_encrypt($employee->emp_id)])) !!}
@@ -60,19 +60,7 @@
             </tbody>
         </table>
     </div>
-    <div>
-        Showing
-        {{ $project_tasks->firstItem() }}
-        to
-        {{ $project_tasks->lastItem() }}
-        of
-        {{ $project_tasks->total() }}
-        tasks
-    </div>
-
-    <div>
-        {{ $project_tasks->links() }}
-    </div>
+    {!! generate_pagination($project_tasks,"Tasks") !!}
 @else
     {!! generate_no_record_html() !!}
 @endif

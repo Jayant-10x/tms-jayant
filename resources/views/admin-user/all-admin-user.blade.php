@@ -31,7 +31,8 @@
                                         id="adm_status" data-choices data-choices-sorting-false
                                         data-placeholder="Select Status" name="adm_status">
 
-                                    <option value="" @selected(request('adm_status') === null || request('adm_status') === '')>
+                                    <option
+                                        value="" @selected(request('adm_status') === null || request('adm_status') === '')>
                                         Select Status
                                     </option>
 
@@ -45,12 +46,12 @@
                                 </select>
                             </div>
                             <div class="col-md-2 mt-4">
-                                <div class="row">
-                                    <div class="col-md-3">
+                                <div class="d-flex g-2 justify-content-around">
+                                    <div>
                                         {!! generate_filter_search_button() !!}
                                     </div>
                                     @if(!empty($filter_arr))
-                                        <div class="col-md-3">
+                                        <div>
                                             {!! generate_filter_clear_button(route('admin_user_module.list')) !!}
                                         </div>
                                     @endif
@@ -103,8 +104,11 @@
                                         <td>{!! generate_status_html($user->adm_status) !!}</td>
                                         <td>{{get_date_time_format($user->adm_created_on)}}</td>
                                         <td class="text-center">
-                                            {!! generate_view_button(route('admin_user_module.view', ['adm_id' => my_encrypt($user->adm_id)])) !!}
-                                            {!! generate_edit_button(route('admin_user_module.edit', ['adm_id' => my_encrypt($user->adm_id)])) !!}
+                                            @php
+                                                $merged_request_arr = array_merge(['adm_id' => my_encrypt($user->adm_id)],request()->query());
+                                            @endphp
+                                            {!! generate_view_button(route('admin_user_module.view', $merged_request_arr)) !!}
+                                            {!! generate_edit_button(route('admin_user_module.edit', $merged_request_arr)) !!}
                                             {{--                                            {!! generate_delete_button(route('employees.list')) !!}--}}
                                         </td>
                                     </tr>
@@ -120,10 +124,9 @@
                 </div>
             </div>
         </div>
-
     </div>
 @endsection
 
 @section('module-right-section')
-    {!! generate_add_button(route('admin_user_module.add'), title:' Admin User', text: ' Admin User') !!}
+    {!! generate_add_button(route('admin_user_module.add',request()->query()), title:' Admin User', text: ' Admin User') !!}
 @endsection

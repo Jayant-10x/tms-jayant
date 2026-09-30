@@ -17,7 +17,7 @@
     <div class="card">
         <div class="card-body">
             <form
-                action="{{$mode == 'edit' ? route('admin_user_module.update', ['adm_id' => my_encrypt($admin_data->adm_id)]) : route('admin_user_module.store')}}"
+                action="{{$mode == 'edit' ? route('admin_user_module.update', array_merge(['adm_id' => my_encrypt($admin_data->adm_id)],request()->query())) : route('admin_user_module.store',request()->query())}}"
                 method="post" id="admin_add_edit_form" enctype="multipart/form-data">
                 @csrf
                 @if($mode == 'edit')
@@ -89,8 +89,10 @@
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="password" class="form-label">Password @empty($admin_data)<span
-                                            class="text-danger">*</span> @endempty</label>
+                                    <label for="password" class="form-label">Password @empty($admin_data)
+                                            <span
+                                                class="text-danger">*</span>
+                                        @endempty</label>
                                     <input type="password" id="password" name="password"
                                            class="form-control @error('password') is-invalid @enderror"
                                            autocomplete="off">
@@ -122,9 +124,9 @@
 
 @section('module-right-section')
     @if($called_from == 'admin')
-        {!! generate_back_to_list_button(route('admin_user_module.list')) !!}
+        {!! generate_back_to_list_button(route('admin_user_module.list',request()->query())) !!}
     @else
-        {!! generate_back_to_list_button(route('my_profile')) !!}
+        {!! generate_back_to_list_button(route('my_profile',request()->query())) !!}
     @endif
 @endsection
 

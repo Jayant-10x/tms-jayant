@@ -54,7 +54,7 @@ class ProjectController extends Controller {
                     }
                 });
         }
-        $all_projects = $allProjectQuery->paginate(config('constants.PER_PAGE_ITEM_COUNT'))->withQueryString();
+        $all_projects = $allProjectQuery->paginate(config('constants.PER_PAGE_ITEM_COUNT'), pageName: "all_projects")->withQueryString();
         return view('projects.all-projects', compact('all_projects'));
     }
 
@@ -98,7 +98,7 @@ class ProjectController extends Controller {
                         ->where('pta_assign_to', '=', $loggedInUserId);
                 });
             }
-            $project_tasks = $projectTaskQuery->paginate(config('constants.PER_PAGE_ITEM_COUNT'))->withQueryString();
+            $project_tasks = $projectTaskQuery->paginate(config('constants.PER_PAGE_ITEM_COUNT'), pageName: 'project_tasks')->withQueryString();
 
             if (count($project_tasks) > 0) {
                 $project_task_assignee = $project_tasks->getCollection()
@@ -107,7 +107,8 @@ class ProjectController extends Controller {
                     })->unique()->values()->toArray();
             }
 
-            $project_team = ProjectTask::query()->select('pta_assign_to as team_member_emp_id', 'employees.emp_full_name', 'employees.emp_designation', 'employees.emp_photo')->join('project_task_assignments', 'project_tasks.prt_id', '=', 'project_task_assignments.pta_prt_id')->join('employees', 'employees.emp_id', '=', 'project_task_assignments.pta_assign_to')->where([['prt_pro_id', '=', $pro_id], ['project_task_assignments.pta_assign_to', '!=', $project_data['pro_manager']]])->distinct('employees.emp_id')->paginate(config('constants.PER_PAGE_ITEM_COUNT'))->withQueryString();
+            $project_team = ProjectTask::query()->select('pta_assign_to as team_member_emp_id', 'employees.emp_full_name', 'employees.emp_designation', 'employees.emp_photo')->join('project_task_assignments', 'project_tasks.prt_id', '=', 'project_task_assignments.pta_prt_id')->join('employees', 'employees.emp_id', '=', 'project_task_assignments.pta_assign_to')->where([['prt_pro_id', '=', $pro_id], ['project_task_assignments.pta_assign_to', '!=', $project_data['pro_manager']]])->distinct('employees.emp_id')->paginate(config('constants.PER_PAGE_ITEM_COUNT'), pageName: 'project_teams')->withQueryString();
+
             if (!empty($project_data['pro_manager'])) {
                 $project_manager = get_employee_data($project_data['pro_manager']);
             }
@@ -119,7 +120,7 @@ class ProjectController extends Controller {
                 'completed_tasks' => $completed_tasks,
                 'pending_tasks' => $pending_tasks,
             ];
-
+//            dd($project_team, $project_tasks);
             return view('projects.view-project', compact('project_data', 'project_manager', 'pro_id', 'project_tasks', 'project_team', 'task_statistics', 'project_task_assignee'));
         } else {
             abort('404');
@@ -159,13 +160,13 @@ class ProjectController extends Controller {
                     ->log();*/
 
                 DB::commit();
-                return redirect()->route('projects.list')->with('success', 'Project added successfully.');
+                return redirect()->route('projects.list', $request->query())->with('success', 'Project added successfully.');
             } else {
-                return redirect()->route('projects.list')->with('error', 'Something went wrong.');
+                return redirect()->route('projects.list', $request->query())->with('error', 'Something went wrong.');
             }
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->route('projects.list')->with('error', 'Something went wrong.');
+            return redirect()->route('projects.list', $request->query())->with('error', 'Something went wrong.');
         }
     }
 

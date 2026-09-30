@@ -40,7 +40,7 @@ class EmployeeController extends Controller {
             $filter_arr = ['emp_status' => $request->emp_status];
         }
 
-        $all_employees = $employeeBaseQuery->paginate(config('constants.PER_PAGE_ITEM_COUNT'))->withQueryString();
+        $all_employees = $employeeBaseQuery->paginate(config('constants.PER_PAGE_ITEM_COUNT'),pageName: "employees")->withQueryString();
         return view('employees.list', compact('all_employees', 'filter_arr'));
     }
 
@@ -136,7 +136,7 @@ class EmployeeController extends Controller {
                 Rule::unique('employees', 'emp_internal_id')->ignore($emp_id, 'emp_id'),
             ],
             'full_name' => 'required|min:' . MIN_LENGTH . '|max:' . MAX_LENGTH_100,
-            'phone_number' => ['required', 'min:' . MIN_LENGTH_10 ,"max:". MAX_LENGTH_20,
+            'phone_number' => ['required', 'min:' . MIN_LENGTH_10, "max:" . MAX_LENGTH_20,
                 Rule::unique('employees', 'emp_phone_number')->ignore($emp_id, 'emp_id'),
             ],
             'email' => ['required', 'email', 'min:' . MIN_LENGTH, 'max:250',
@@ -203,7 +203,7 @@ class EmployeeController extends Controller {
                 }
             });
 
-            return redirect(route('employees.list', $request->query()))->with('success', 'Employee updated successfully.');
+            return redirect(route('employees.edit', array_merge(['emp_id' => my_encrypt($emp_id)], $request->query())))->with('success', 'Employee updated successfully.');
 
         } catch (\Throwable $e) {
             \Log::error('Employee update failed', [
@@ -212,7 +212,7 @@ class EmployeeController extends Controller {
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
             ]);
-            return redirect(route('employees.list', $request->query()))->with('error', 'Something went wrong.');
+            return redirect(route('employees.edit', array_merge(['emp_id' => my_encrypt($emp_id)], $request->query())))->with('error', 'Something went wrong.');
         }
     }
 }

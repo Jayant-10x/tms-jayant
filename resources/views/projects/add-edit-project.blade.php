@@ -7,7 +7,7 @@
     <div class="card">
         <div class="card-body">
             <form
-                action="{{$mode == 'edit' ? route('admin_user_module.update', ['adm_id' => my_encrypt($admin_data->adm_id)]) : route('projects.save')}}"
+                action="{{$mode == 'edit' ? route('admin_user_module.update', array_merge(['adm_id' => my_encrypt($admin_data->adm_id)],request()->query())) : route('projects.save',request()->query())}}"
                 method="post" id="project_form" enctype="multipart/form-data">
                 @csrf
                 @if($mode == 'edit')
@@ -61,7 +61,8 @@
                     <div class="col-lg-12">
                         <div class="mb-3">
                             <label for="project_desc" class="form-label">Description</label>
-                            <textarea class="form-control" id="project_desc" rows="5" name="project_desc">{{old('project_desc')}}</textarea>
+                            <textarea class="form-control" id="project_desc" rows="5"
+                                      name="project_desc">{{old('project_desc')}}</textarea>
                             @error('project_desc')
                             <span class="validation-message">{{ $message }}</span>
                             @enderror
@@ -74,7 +75,7 @@
     </div>
 @endsection
 @section('module-right-section')
-    {!! generate_back_to_list_button(route('projects.list')) !!}
+    {!! generate_back_to_list_button(route('projects.list',request()->query())) !!}
 @endsection
 @push('script')
     <script>
