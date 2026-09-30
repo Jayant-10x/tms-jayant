@@ -122,6 +122,7 @@
         }
     </style>
 @endpush
+
 @section('content')
     @php
         $hour = date('G');
@@ -137,7 +138,7 @@
     @endphp
     <div class="dashboard-section">
         <!-- Greeting Header Section -->
-        <header class="greeting-header">
+        <div class="greeting-header">
             <div class="row">
                 <div class="col-md-9">
                     <div class="row">
@@ -156,7 +157,7 @@
                     <img src="{{asset('images/welcome.gif')}}" style="width: 34%;height: 107%;">
                 </div>
             </div>
-        </header>
+        </div>
 
         @if(!is_admin())
             @php
