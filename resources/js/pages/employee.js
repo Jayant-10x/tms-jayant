@@ -287,7 +287,23 @@ $(document).ready(function () {
                 required: true,
                 number: true,
                 minlength: 10,
-                maxlength: 15
+                maxlength: 15,
+                remote: {
+                    url: empPhoneUniqueCheckUrl,
+                    type: "get",
+                    dataType: "json",
+                    data: {
+                        phone_number: function () {
+                            return $('#phone_number').val();
+                        },
+                        mode: function () {
+                            return emp_form_mode;
+                        },
+                        emp_id: function () {
+                            return emp_id;
+                        }
+                    }
+                }
             },
             email: {
                 required: true,
@@ -360,6 +376,9 @@ $(document).ready(function () {
             },
             email: {
                 remote: "Employee with this email already exists."
+            },
+            phone_number: {
+                remote: "This phone number already exists."
             },
             joining_date: {
                 required: "Please select a joining date."
