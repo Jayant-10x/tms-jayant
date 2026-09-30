@@ -12,7 +12,7 @@ export default defineConfig({
                 'resources/scss/icons.scss',
                 'node_modules/swiper/swiper-bundle.min.css',
                 'node_modules/nouislider/dist/nouislider.min.css',
-                'node_modules/choices.js/public/assets/styles/choices.min.css',
+                'resources/css/choices.css',
                 'node_modules/swiper/swiper-bundle.min.css',
                 // 'node_modules/fullcalendar/main.min.css',
                 // 'node_modules/gridjs/dist/theme/mermaid.min.css',
