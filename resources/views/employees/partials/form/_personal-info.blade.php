@@ -1,5 +1,5 @@
 <form
-    action="{{$mode == 'edit' ? route('employees.update', ['emp_id' => my_encrypt($emp_data->emp_id)]) : route('employees.save')}}"
+    action="{{$mode == 'edit' ? route('employees.update', array_merge(['emp_id' => my_encrypt($emp_data->emp_id)], request()->query())) : route('employees.save', request()->query())}}"
     method="post" id="employee_add_edit_form" enctype="multipart/form-data">
     @csrf
     @if($mode == 'edit')

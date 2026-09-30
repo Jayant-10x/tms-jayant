@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\AdminUser;
 use App\Models\Employee;
 use App\Services\PermissionService;
 use Carbon\Carbon;
@@ -11,6 +12,13 @@ function get_logged_in_user_employee_data() {
     }
 
     return Employee::find(Auth::user()->adm_emp_id);
+}
+
+function get_admin_user_data($adm_id) {
+    if (!Auth::check()) {
+        return null;
+    }
+    return AdminUser::find($adm_id);
 }
 
 function get_employee_data($emp_id) {

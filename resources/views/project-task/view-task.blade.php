@@ -158,11 +158,16 @@
                                 @if(!empty($task_data->prt_attachments))
                                     @foreach($task_data->prt_attachments as $attachment)
                                         @php
-                                            $uploader_data = get_employee_data($attachment['uploaded_by']);
+                                            $uploader_data = get_admin_user_data($attachment['uploaded_by']);
+                                            if(empty($uploader_data['adm_emp_id'])) {
+                                                $designation = \App\Enums\UserRoleEnum::tryFrom($uploader_data['adm_role'])->label();
+                                            } else {
+                                                $designation = (get_employee_data($uploader_data['adm_emp_id'])['emp_designation'])->label();
+                                            }
 
                                             $uploader_info_content = '<div class="row">
                                                     <div class="col-md-5 fw-bold">Uploaded By : </div>
-                                                    <div class="col-md-7">' . $uploader_data['emp_full_name'] . ' (' . $uploader_data['emp_designation']->label() . ')</div>
+                                                    <div class="col-md-7">' . $uploader_data['adm_name'] . ' (' . $designation . ')</div>
                                                  </div>
                                                  <div class="row">
                                                     <div class="col-md-5 fw-bold">Uploaded On: </div>
@@ -176,7 +181,8 @@
                                                 </div>
                                                 <div class="col-md-1 text-end">
                                                     <iconify-icon icon="solar:info-square-linear"
-                                                                  class="align-middle fs-14 text-black" tabindex="0" data-bs-toggle="popover"
+                                                                  class="align-middle fs-14 text-black" tabindex="0"
+                                                                  data-bs-toggle="popover"
                                                                   data-bs-trigger="hover"
                                                                   data-bs-html="true"
                                                                   data-bs-content="{{$uploader_info_content}}"

@@ -54,11 +54,11 @@ Route::middleware('auth')->group(function () {
     Route::put('/admin-user/update/{adm_id}', [AdminUserController::class, 'update'])->middleware('permission:admin_users.edit')->name('admin_user.update');
 
     Route::get('/employees', [EmployeeController::class, 'index'])->middleware('permission:employees.view')->name('employees.list');
-    Route::get('employees/add', [EmployeeController::class, 'add'])->middleware('permission:employees.add')->name('employees.add');
-    Route::post('employees/save', [EmployeeController::class, 'store'])->middleware('permission:employees.add')->name('employees.save');
-    Route::get('employees/view/{emp_id}', [EmployeeController::class, 'view'])->middleware('permission:employees.view')->name('employees.view');
-    Route::get('employees/edit/{emp_id}', [EmployeeController::class, 'edit'])->middleware('permission:employees.edit')->name('employees.edit');
-    Route::put('employees/update/{emp_id}', [EmployeeController::class, 'update'])->middleware('permission:employees.edit')->name('employees.update');
+    Route::get('employee/add', [EmployeeController::class, 'add'])->middleware('permission:employees.add')->name('employees.add');
+    Route::post('employee/save', [EmployeeController::class, 'store'])->middleware('permission:employees.add')->name('employees.save');
+    Route::get('employee/view/{emp_id}', [EmployeeController::class, 'view'])->middleware('permission:employees.view')->name('employees.view');
+    Route::get('employee/edit/{emp_id}', [EmployeeController::class, 'edit'])->middleware('permission:employees.edit')->name('employees.edit');
+    Route::put('employee/update/{emp_id}', [EmployeeController::class, 'update'])->middleware('permission:employees.edit')->name('employees.update');
 
     Route::get('/my-profile', [MyProfileController::class, 'viewProfile'])->name('my_profile');
     Route::get('/my-profile/edit', [MyProfileController::class, 'editProfile'])->name('my_profile.edit');
@@ -87,9 +87,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/all-tasks', [ProjectTaskController::class, 'allTasks'])->middleware('permission:all_tasks.view')->name('all_tasks');
     Route::get('/task/view/{prt_id}/{called_from?}', [ProjectTaskController::class, 'viewTask'])->middleware('permission:all_tasks.view|team_tasks.view|my_tasks.view')->name('task.view');
     Route::post('/update-task-status/{prt_id}', [ProjectTaskController::class, 'updateTaskStatus'])->middleware('permission:all_my_tasks.edit|team_tasks.edit|all_tasks.edit')->name('update_task_status_via_ajax');
-    Route::post('/upload-task-attachment/{prt_id}', [ProjectTaskController::class, 'uploadTaskAttachment'])->middleware('permission:all_my_tasks.edit|team_tasks.edit')->name('upload_task_attachments_via_ajax');
+    Route::post('/upload-task-attachment/{prt_id}', [ProjectTaskController::class, 'uploadTaskAttachment'])->middleware('permission:all_my_tasks.edit|team_tasks.edit|all_tasks.edit')->name('upload_task_attachments_via_ajax');
     Route::post('/update-sub-task-via-ajax/is-done/{pst_id}', [ProjectSubTaskController::class, 'updateSubTaskIsDone'])->middleware('permission:all_my_tasks.edit|team_tasks.edit|all_tasks.edit')->name('update_sub_task.is_done');
-    Route::post('/add-sub-task-via-ajax/{prt_id}', [ProjectSubTaskController::class, 'addSubTask'])->middleware('permission:team_tasks.edit')->name('add_sub_task_via_ajax');
+    Route::post('/add-sub-task-via-ajax/{prt_id}', [ProjectSubTaskController::class, 'addSubTask'])->middleware('permission:team_tasks.edit|all_tasks.edit')->name('add_sub_task_via_ajax');
     Route::delete('/delete-sub-task-via-ajax/{pst_id}/{prt_id}', [ProjectSubTaskController::class, 'deleteSubTask'])->middleware('permission:all_tasks.edit')->name('delete_sub_task_via_ajax');
 
     Route::get('all-my-tasks', [ProjectTaskController::class, 'assignedToMe'])->middleware('permission:all_my_tasks.view|all_my_tasks.edit')->name('all_my_tasks');

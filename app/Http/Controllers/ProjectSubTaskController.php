@@ -120,7 +120,8 @@ class ProjectSubTaskController extends Controller {
         if (!$subTask) {
             return response()->json(['status' => false, 'message' => 'This sub task does not exist.',], 404);
         }
-
+        // history delete
+        SubTaskDoneHistory::query()->where('sdh_pst_id', $pst_id)->delete();
         $subTask->delete();
 
         return response()->json(['status' => true, 'message' => 'Sub task deleted successfully.',], 200);

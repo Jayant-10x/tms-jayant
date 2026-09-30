@@ -38,7 +38,7 @@
 @endsection
 
 @section('module-right-section')
-    {!! generate_back_to_list_button(route('employees.list')) !!}
+    {!! generate_back_to_list_button(route('employees.list', request()->query())) !!}
 @endsection
 
 @push('script')

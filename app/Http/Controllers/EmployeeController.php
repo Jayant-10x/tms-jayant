@@ -46,7 +46,7 @@ class EmployeeController extends Controller {
 
     public function add(Request $request) {
         $mode = 'add';
-//        session()->flash('success', 'Employee added successfully.');
+        //        session()->flash('success', 'Employee added successfully.');
         return view('employees.add_edit_employee', compact('mode'));
     }
 
@@ -95,9 +95,9 @@ class EmployeeController extends Controller {
         $is_saved = $employee->save();
 
         if ($is_saved) {
-            return redirect(route('employees.list'))->with('success', 'Employee added successfully.');
+            return redirect(route('employees.list', $request->query()))->with('success', 'Employee added successfully.');
         } else {
-            return redirect(route('employees.list'))->with('error', 'Something went wrong.');
+            return redirect(route('employees.list', $request->query()))->with('error', 'Something went wrong.');
         }
     }
 
@@ -124,7 +124,7 @@ class EmployeeController extends Controller {
         if (!empty($emp_data)) {
             return view('employees.add_edit_employee', compact('emp_data', 'admin_data', 'mode'));
         } else {
-            return redirect()->back()->with('error', 'Employee not found.');
+            return redirect(route('employees.list', $request->query()))->with('error', 'Employee not found.');
         }
     }
 
@@ -201,7 +201,7 @@ class EmployeeController extends Controller {
                 }
             });
 
-            return redirect()->back()->with('success', 'Employee updated successfully.');
+            return redirect(route('employees.list', $request->query()))->with('success', 'Employee updated successfully.');
 
         } catch (\Throwable $e) {
             \Log::error('Employee update failed', [
@@ -210,7 +210,7 @@ class EmployeeController extends Controller {
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
             ]);
-            return redirect()->back()->with('error', 'Something went wrong.');
+            return redirect(route('employees.list', $request->query()))->with('error', 'Something went wrong.');
         }
     }
 }

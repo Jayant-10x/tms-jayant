@@ -39,8 +39,8 @@
 
 @section('module-right-section')
     @if($called_from == 'employee')
-        {!! generate_back_to_list_button(route('employees.list')) !!}
+        {!! generate_back_to_list_button(route('employees.list', request()->query())) !!}
     @else
-        {!! generate_edit_button(route('my_profile.edit'), text: ' Edit Profile') !!}
+        {!! generate_edit_button(route('my_profile.edit', request()->query()), text: ' Edit Profile') !!}
     @endif
 @endsection

@@ -228,7 +228,7 @@ class ProjectTaskController extends Controller {
             DB::beginTransaction();
             if ($request->hasFile('attachments')) {
                 foreach ($request->file('attachments') as $file) {
-                    $loggedInUser = get_logged_in_user_emp_id();
+                    $loggedInUserId = get_logged_in_user_id();
 
                     $originalNameOnly = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
                     $extension = $file->getClientOriginalExtension();
@@ -236,7 +236,7 @@ class ProjectTaskController extends Controller {
                     $file->storeAs('task_attachments', $uniqueName, 'public');
                     $fileNames[] = [
                         'file_name' => $uniqueName,
-                        'uploaded_by' => $loggedInUser,
+                        'uploaded_by' => $loggedInUserId,
                         'uploaded_on' => $current_date,
                     ];
                 }
@@ -362,7 +362,7 @@ class ProjectTaskController extends Controller {
         }
         $attachments[] = [
             'file_name' => $fileName,
-            'uploaded_by' => get_logged_in_user_emp_id(),
+            'uploaded_by' => get_logged_in_user_id(),
             'uploaded_on' => date(config('constants.DB_DATE_TIME_FORMAT')),
         ];
         $task->prt_attachments = $attachments;

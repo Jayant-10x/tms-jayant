@@ -14,8 +14,10 @@
                     @endif
                     <div class="card team-members-card">
                         <div class="card-body">
-                        <span
-                            class="team-member-role-pill">{!! \App\Enums\UserRoleEnum::tryFrom('manager')->badge() !!}</span>
+                        <span class="team-member-role-pill">
+                            <span class="badge rounded-pill badge-outline-purple me-1 fs-6 badge-soft-purple">Project Manager</span>
+                            {{--{!! \App\Enums\UserRoleEnum::tryFrom('manager')->badge() !!}--}}
+                        </span>
                             <div class="d-flex flex-wrap align-items-center gap-2">
                                 <img src="{{$emp_photo}}"
                                      class="avatar-lg rounded-3 border border-light border-3 object-fit-cover">

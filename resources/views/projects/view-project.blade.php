@@ -155,12 +155,12 @@
                                     <span class="d-none d-sm-block">Team</span>
                                 </a>
                             </li>
-                            <li class="nav-item">
+                            {{--<li class="nav-item">
                                 <a href="#project_activity" data-bs-toggle="tab" aria-expanded="true" class="nav-link">
                                     <span class="d-block d-sm-none"><i class="bx bx-user"></i></span>
                                     <span class="d-none d-sm-block">Activity</span>
                                 </a>
-                            </li>
+                            </li>--}}
                         </ul>
                         <div class="tab-content text-muted">
                             <div class="tab-pane show active" id="project_tasks">
@@ -169,9 +169,9 @@
                             <div class="tab-pane" id="project_team">
                                 @include('projects.partials._project-team', [$project_data])
                             </div>
-                            <div class="tab-pane" id="project_activity">
+                            {{--<div class="tab-pane" id="project_activity">
                                 @include('projects.partials._project-activity')
-                            </div>
+                            </div>--}}
                         </div>
                     </div>
                 </div>

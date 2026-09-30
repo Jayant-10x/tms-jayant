@@ -29,8 +29,8 @@
     @forelse($history_data as $history)
         @php
             // Fetch employee details using the sdh_done_by ID
-            $employee = get_employee_data($history['sdh_done_by']);
-            $empName = is_array($employee) ? ($employee['emp_full_name'] ?? 'Unknown User') : ($employee->emp_full_name ?? 'Unknown User');
+            $action_performer_data = get_admin_user_data($history['sdh_done_by']);
+            $empName = $action_performer_data['adm_name'] ?? 'Unknown User';
             $initials = get_initials_char($empName);
             $isChecked = $history['sdh_is_checked'] == 1;
         @endphp

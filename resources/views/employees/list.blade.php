@@ -124,9 +124,12 @@
                                 <td>{!! generate_status_html($employee->emp_status) !!}</td>
                                 <td>{{get_date_time_format($employee->emp_created_on)}}</td>
                                 <td>
+                                    @php
+                                        $request_merged_arr = array_merge(['emp_id' => my_encrypt($employee->emp_id)], request()->query());
+                                    @endphp
                                     <div class="d-flex gap-2">
-                                        {!! generate_view_button(route('employees.view', ['emp_id' => my_encrypt($employee->emp_id)])) !!}
-                                        {!! generate_edit_button(route('employees.edit', ['emp_id' => my_encrypt($employee->emp_id)])) !!}
+                                        {!! generate_view_button(route('employees.view', $request_merged_arr)) !!}
+                                        {!! generate_edit_button(route('employees.edit', $request_merged_arr)) !!}
                                         {{--                                        {!! generate_delete_button(route('employees.list')) !!}--}}
                                     </div>
                                 </td>
@@ -145,12 +148,6 @@
 @endsection
 
 @section('module-right-section')
-    {!! generate_add_button(route('employees.add'), title:' Employee', text: ' Employee') !!}
+    {!! generate_add_button(route('employees.add', request()->query()), title:' Employee', text: ' Employee') !!}
 @endsection
 
-@push('script')
-    <script>
-        $(document).ready(function () {
-        });
-    </script>
-@endpush

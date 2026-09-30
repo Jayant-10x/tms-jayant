@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->foreign($this->_pre_col . 'pst_id')->references('pst_id')->on('project_sub_tasks')->nullOnDelete();
 
             $table->unsignedBigInteger($this->_pre_col . 'done_by');
-            $table->foreign($this->_pre_col . 'done_by', $this->_pre_col . 'done_by_foreign')->references('emp_id')->on('employees');
+            $table->foreign($this->_pre_col . 'done_by', $this->_pre_col . 'done_by_foreign')->references('adm_id')->on('admin_users');
 
             $table->boolean($this->_pre_col . 'is_checked');
             get_created_updated_by_db_column($table, $this->_pre_col, true);
