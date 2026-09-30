@@ -1,6 +1,6 @@
 @extends('layouts.vertical', ['title' => 'View Project','subTitle' => 'View Project'])
 @push('css')
-    @vite(['resources/css/project.css','node_modules/choices.js/public/assets/styles/choices.min.css'])
+    @vite(['resources/css/project.css','resources/css/choices.css'])
 @endpush
 @section('content')
     @php
