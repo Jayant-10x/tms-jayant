@@ -38,8 +38,8 @@
                         <label for="emp_sub_dept" class="form-label">Sub Department</label>
                         <select id="emp_sub_dept" name="emp_sub_dept"
                                 class="form-control" data-choices data-choices-sorting-false
-                                data-placeholder="Select Sub Department">
-                            <option value="">Select Sub Department</option>
+                                data-placeholder="Select Sub Dept.">
+                            <option value="">Select Sub Dept.</option>
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -62,12 +62,12 @@
                         </select>
                     </div>
                     <div class="col-md-2 mt-4">
-                        <div class="row">
-                            <div class="col-md-3">
+                        <div class="d-flex g-2 justify-content-around">
+                            <div>
                                 {!! generate_filter_search_button() !!}
                             </div>
                             @if(!empty($filter_arr))
-                                <div class="col-md-3">
+                                <div>
                                     {!! generate_filter_clear_button(route('employees.list')) !!}
                                 </div>
                             @endif

@@ -206,7 +206,8 @@
 </form>
 <script>
     let empIdUniqueCheckUrl = '{{route('check_unique_emp_internal_id_via_ajax')}}';
-    let empEmailUniqueCheckUrl = '{{route('check_unique_emp_email_via_ajax')}}'
+    let empEmailUniqueCheckUrl = '{{route('check_unique_emp_email_via_ajax')}}';
+    let empPhoneUniqueCheckUrl = '{{route('check_unique_emp_phone_via_ajax')}}';
     let emp_form_mode = '{{my_encrypt($mode, true)}}';
     let emp_id = null;
 
