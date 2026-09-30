@@ -63,11 +63,6 @@
         }
 
         /* Custom Pastel Colors per Card */
-        .badge-blue {
-            background-color: #eef2ff;
-            color: #3b82f6;
-        }
-
         .badge-light-blue {
             background-color: #eff6ff;
             color: #2563eb;
@@ -163,70 +158,80 @@
             </div>
         </header>
 
-        <!-- Stat Cards Section -->
-        <div class="cards-grid">
+        @if(!is_admin())
+            @php
+                $loggedInUserId = get_logged_in_user_emp_id();
+                $total_tasks = !empty($user_statistics) && $user_statistics[$loggedInUserId]['total_tasks'] ? $user_statistics[$loggedInUserId]['total_tasks'] : 0;
+                $in_progress_tasks = !empty($user_statistics) && $user_statistics[$loggedInUserId]['progress_tasks'] ? $user_statistics[$loggedInUserId]['progress_tasks'] : 0;
+                $pending_tasks = !empty($user_statistics) && $user_statistics[$loggedInUserId]['pending_dashboard_count'] ? $user_statistics[$loggedInUserId]['pending_dashboard_count'] : 0;
+                $completed_tasks = !empty($user_statistics) && $user_statistics[$loggedInUserId]['completed_tasks'] ? $user_statistics[$loggedInUserId]['completed_tasks'] : 0;
+                $overdue_tasks = !empty($user_statistics) && $user_statistics[$loggedInUserId]['overdue_tasks'] ? $user_statistics[$loggedInUserId]['overdue_tasks'] : 0;
+            @endphp
+                <!-- Stat Cards Section -->
+            <div class="cards-grid">
 
-            <!-- Card 1: Total Tasks -->
-            <div class="stat-card">
-                <div class="icon-badge badge-soft-primary">
-                    <iconify-icon icon="ri-list-check-3" class="align-middle fs-3 text-primary"></iconify-icon>
+                <!-- Card 1: Total Tasks -->
+                <div class="stat-card">
+                    <div class="icon-badge badge-soft-primary">
+                        <iconify-icon icon="ri-list-check-3" class="align-middle fs-3 text-primary"></iconify-icon>
+                    </div>
+                    <div class="card-content">
+                        <span class="card-value">{{$total_tasks}}</span>
+                        <span class="card-label">Total Tasks</span>
+                        <span class="card-subtitle">+2 this week</span>
+                    </div>
                 </div>
-                <div class="card-content">
-                    <span class="card-value">1</span>
-                    <span class="card-label">Total Tasks</span>
-                    <span class="card-subtitle">+2 this week</span>
+
+                <!-- Card 2: In Progress -->
+                <div class="stat-card">
+                    <div class="icon-badge badge-light-blue">
+                        <iconify-icon icon="ri:progress-5-line" class="align-middle fs-3"></iconify-icon>
+                    </div>
+                    <div class="card-content">
+                        <span class="card-value">{{$in_progress_tasks}}</span>
+                        <span class="card-label">In Progress</span>
+                        <span class="card-subtitle">Active now</span>
+                    </div>
                 </div>
+
+                <!-- Card 3: Pending -->
+                <div class="stat-card">
+                    <div class="icon-badge badge-yellow">
+                        <iconify-icon icon="ic:outline-watch-later" class="align-middle fs-3"></iconify-icon>
+                    </div>
+                    <div class="card-content">
+                        <span class="card-value">{{$pending_tasks}}</span>
+                        <span class="card-label">Pending</span>
+                        <span class="card-subtitle">Not started</span>
+                    </div>
+                </div>
+
+                <!-- Card 4: Completed -->
+                <div class="stat-card">
+                    <div class="icon-badge badge-green">
+                        <iconify-icon icon="mdi:check-circle-outline" class="align-middle fs-3"></iconify-icon>
+                    </div>
+                    <div class="card-content">
+                        <span class="card-value">{{$completed_tasks}}</span>
+                        <span class="card-label">Completed</span>
+                        <span class="card-subtitle">{{$total_tasks != 0 ? ($completed_tasks / $total_tasks) * 100 : 0}}% completion</span>
+                    </div>
+                </div>
+
+                <!-- Card 5: Overdue -->
+                <div class="stat-card">
+                    <div class="icon-badge badge-red">
+                        <iconify-icon icon="solar:danger-triangle-outline" class="align-middle fs-3"></iconify-icon>
+                    </div>
+                    <div class="card-content">
+                        <span class="card-value">{{$overdue_tasks}}</span>
+                        <span class="card-label">Overdue</span>
+                        <span class="card-subtitle">Needs attention</span>
+                    </div>
+                </div>
+
             </div>
-
-            <!-- Card 2: In Progress -->
-            <div class="stat-card">
-                <div class="icon-badge badge-light-blue">
-                    <iconify-icon icon="ri:progress-5-line" class="align-middle fs-3"></iconify-icon>
-                </div>
-                <div class="card-content">
-                    <span class="card-value">0</span>
-                    <span class="card-label">In Progress</span>
-                    <span class="card-subtitle">Active now</span>
-                </div>
-            </div>
-
-            <!-- Card 3: Pending -->
-            <div class="stat-card">
-                <div class="icon-badge badge-yellow">
-                    <iconify-icon icon="ic:outline-watch-later" class="align-middle fs-3"></iconify-icon>
-                </div>
-                <div class="card-content">
-                    <span class="card-value">0</span>
-                    <span class="card-label">Pending</span>
-                    <span class="card-subtitle">Not started</span>
-                </div>
-            </div>
-
-            <!-- Card 4: Completed -->
-            <div class="stat-card">
-                <div class="icon-badge badge-green">
-                    <iconify-icon icon="mdi:check-circle-outline" class="align-middle fs-3"></iconify-icon>
-                </div>
-                <div class="card-content">
-                    <span class="card-value">0</span>
-                    <span class="card-label">Completed</span>
-                    <span class="card-subtitle">0% completion</span>
-                </div>
-            </div>
-
-            <!-- Card 5: Overdue -->
-            <div class="stat-card">
-                <div class="icon-badge badge-red">
-                    <iconify-icon icon="solar:danger-triangle-outline" class="align-middle fs-3"></iconify-icon>
-                </div>
-                <div class="card-content">
-                    <span class="card-value">1</span>
-                    <span class="card-label">Overdue</span>
-                    <span class="card-subtitle">Needs attention</span>
-                </div>
-            </div>
-
-        </div>
+        @endif
     </div>
 
     {{-- <div class="row">

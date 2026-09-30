@@ -176,9 +176,13 @@ class ProjectTaskController extends Controller {
 
             $task_statistics = $this->userTaskStatistics([$loggedInEmpId]);
 
-            $today_tasks = $all_tasks->where('prt_due_date', '=', date('Y-m-d'))->where('prt_status', '!=', TaskStatus::COMPLETED->value)->count();
-            $upcoming_tasks = $all_tasks->where('prt_due_date', '>', date('Y-m-d'))->where('prt_status', '!=', TaskStatus::COMPLETED->value)->count();
-            $overdue_tasks = $all_tasks->where('prt_due_date', '<', date('Y-m-d'))->where('prt_status', '!=', TaskStatus::COMPLETED->value)->count();
+            $today = date('Y-m-d');
+            $today_tasks = $all_tasks->filter(function ($task) use ($today) {
+                return $task->prt_start_date <= $today
+                    && $task->prt_due_date >= $today;
+            })->whereNotIn('prt_status', [TaskStatus::COMPLETED->value, TaskStatus::CANCELLED->value])->count();
+            $upcoming_tasks = $all_tasks->where('prt_due_date', '>', $today)->whereNotIn('prt_status', [TaskStatus::COMPLETED->value, TaskStatus::CANCELLED->value])->count();
+            $overdue_tasks = $all_tasks->where('prt_due_date', '<', $today)->whereNotIn('prt_status', [TaskStatus::COMPLETED->value, TaskStatus::CANCELLED->value])->count();
 
             if (isset($task_statistics[$loggedInEmpId])) {
                 $task_statistics[$loggedInEmpId] += [
@@ -400,6 +404,7 @@ class ProjectTaskController extends Controller {
     }
 
     public function userTaskStatistics($emp_ids, $pro_id = null) {
+        $emp_ids = is_array($emp_ids) ? $emp_ids : [$emp_ids];
         $userTaskQuery = ProjectTask::query()->join('project_task_assignments', 'prt_id', '=', 'pta_prt_id');
 
         if (!empty($pro_id)) {
@@ -412,13 +417,19 @@ class ProjectTaskController extends Controller {
             $employeeTasks = $userTaskData->where('pta_assign_to', $emp_id);
 
             $total_tasks = $employeeTasks->count();
-            $completed_tasks = $employeeTasks->where('prt_status', TaskStatus::COMPLETED->value)->count();
+            $progress_tasks = $employeeTasks->where('prt_status', TaskStatus::IN_PROGRESS)->count();
+            $overdue_tasks = $employeeTasks->whereNotIn('prt_status', [TaskStatus::COMPLETED, TaskStatus::CANCELLED])->where('prt_due_date', '<', date('Y-m-d'))->count();
+            $pending_dashboard_count = $employeeTasks->whereNotIn('prt_status', [TaskStatus::COMPLETED, TaskStatus::CANCELLED, TaskStatus::IN_PROGRESS])->where('prt_due_date', '>=', date('Y-m-d'))->count();
+            $completed_tasks = $employeeTasks->where('prt_status', TaskStatus::COMPLETED)->count();
             $pending_tasks = $total_tasks - $completed_tasks;
 
             $statistics[$emp_id] = [
                 'total_tasks' => $total_tasks,
                 'completed_tasks' => $completed_tasks,
                 'pending_tasks' => $pending_tasks,
+                'overdue_tasks' => $overdue_tasks,
+                'pending_dashboard_count' => $pending_dashboard_count,
+                'progress_tasks' => $progress_tasks,
             ];
         }
         return $statistics;

@@ -125,9 +125,8 @@ class AjaxController extends Controller {
             $team_members = get_employee_children_in_depth((int)get_logged_in_user_emp_id(), depth: config('constants.DEFAULT_DEPTH'));
             $projectBaseQuery = Project::query()->select('pro_id', 'pro_name')->where('pro_status', '=', ProjectStatus::ACTIVE->value);
             if (get_logged_in_emp_designation() == DesignationEnum::MANAGER) {
-                $projectBaseQuery->whereIn('pro_manager', array_column($team_members, 'emp_id'));
-            } else {
-                $projectBaseQuery->where('pro_manager', '=', get_logged_in_user_emp_id());
+                $projectBaseQuery->whereIn('pro_manager', array_column($team_members, 'emp_id'))
+                                    ->orWhere('pro_manager', '=', get_logged_in_user_emp_id());
             }
             $projects = $projectBaseQuery->get()->pluck('pro_name', 'pro_id')->toArray();
             $data = view('project-task.add-project-task', compact('team_members', 'projects'))->render();
