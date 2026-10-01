@@ -240,12 +240,44 @@
                         </div>
                     </div>
                 </div>
+
+                @if(!empty($project_manager))
+                    @php
+                        $emp_photo = asset('images/users/dummy-avatar.jpg');
+                        if(!empty($project_manager['emp_photo'])) {
+                            $emp_photo = asset('storage/employees/'. $project_manager['emp_photo']);
+                        }
+                    @endphp
+                    @if(permission_can('team_members', 'view'))
+                        <a href="{{route('team_member.view', array_merge(['called_from' => 'project_team', 'member_id' => my_encrypt($project_data['pro_manager']), 'pro_id' => my_encrypt($pro_id)],request()->query()))}}"
+                           target="_self">
+                            @endif
+                            <div class="card team-members-card">
+                                <div class="card-body">
+                        <span class="team-member-role-pill">
+                            <span class="badge rounded-pill badge-outline-purple me-1 fs-6 badge-soft-purple">Project Manager</span>
+                            {{--{!! \App\Enums\UserRoleEnum::tryFrom('manager')->badge() !!}--}}
+                        </span>
+                                    <div class="d-flex flex-wrap align-items-center gap-2">
+                                        <img src="{{$emp_photo}}"
+                                             class="avatar-lg rounded-3 border border-light border-3 object-fit-cover">
+                                        <div>
+                                            <p class="text-dark fw-medium fs-16 mb-0">{{$project_manager['emp_full_name']}}</p>
+                                            <p class="mb-0 badge designation-badge rounded-pill me-1 fs-6">{{$project_manager['emp_designation']->label()}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @if(permission_can('team_members', 'view'))
+                        </a>
+                    @endif
+                @endif
             </div>
         </div>
     </div>
 @endsection
 @section('module-right-section')
-    {!! generate_back_to_list_button(route('projects.list')) !!}
+    {!! generate_back_to_list_button(route('projects.list',request()->query())) !!}
 @endsection
 
 @push('script')

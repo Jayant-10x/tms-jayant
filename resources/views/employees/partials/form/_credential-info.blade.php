@@ -1,5 +1,5 @@
 <form
-    action="{{!empty($admin_data) ? route('admin_user.update', ['adm_id' => my_encrypt($admin_data->adm_id)]) : route('admin_user.save', ['emp_id' => my_encrypt($emp_data->emp_id)])}}"
+    action="{{!empty($admin_data) ? route('admin_user.update', array_merge(['adm_id' => my_encrypt($admin_data->adm_id)],request()->query())) : route('admin_user.save', array_merge(['emp_id' => my_encrypt($emp_data->emp_id)],request()->query()))}}"
     method="post" id="credential_form">
     @csrf
     @if(!empty($admin_data))
@@ -43,8 +43,10 @@
         </div>
         <div class="col-lg-4">
             <div class="mb-3">
-                <label for="password" class="form-label">Password @empty($admin_data)<span
-                        class="text-danger">*</span> @endempty</label>
+                <label for="password" class="form-label">Password @empty($admin_data)
+                        <span
+                            class="text-danger">*</span>
+                    @endempty</label>
                 <input type="password" id="password" name="password"
                        class="form-control @error('password') is-invalid @enderror"
                        autocomplete="off">

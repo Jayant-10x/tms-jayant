@@ -176,7 +176,7 @@
                                 <td>
                                     <div class="d-flex gap-2">
                                         @if(permission_can('all_tasks', 'view') || is_admin())
-                                            {!! generate_view_button(route('task.view', ['prt_id' => my_encrypt($emp_task->prt_id), 'called_from'=> 'team_member', 'return_url' => url()->full()])) !!}
+                                            {!! generate_view_button(route('task.view', array_merge(['prt_id' => my_encrypt($emp_task->prt_id), 'called_from'=> 'team_member', 'return_url' => url()->full()],request()->query()))) !!}
                                         @else
                                             -
                                         @endif
@@ -201,9 +201,9 @@
 @section('module-right-section')
     @php
         if($called_from == 'project_team' && !empty($pro_id))
-            $back_url = route('project.view',['pro_id' => $pro_id]);
+            $back_url = route('project.view',array_merge(['pro_id' => $pro_id],request()->query()));
         else
-            $back_url = route('team_members.list');
+            $back_url = route('team_members.list',request()->query());
     @endphp
 
     {!! generate_back_to_list_button($back_url) !!}

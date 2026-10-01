@@ -55,9 +55,9 @@
 
 @section('module-right-section')
     @if($called_from == 'admin')
-        {!! generate_back_to_list_button(route('admin_user_module.list')) !!}
+        {!! generate_back_to_list_button(route('admin_user_module.list',request()->query())) !!}
     @else
-        {!! generate_edit_button(route('my_profile.edit'), text: ' Edit Profile') !!}
+        {!! generate_edit_button(route('my_profile.edit',request()->query()), text: ' Edit Profile') !!}
     @endif
 @endsection
 

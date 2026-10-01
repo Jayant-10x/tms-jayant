@@ -121,6 +121,7 @@ function get_initials_char(string $text, $returned_limit = 2): string {
 }
 
 function generate_pagination($data_collection, string $item_name, string $custom_class = ''): string {
+    $item_name = 'results';
     if ($data_collection->total() <= config('constants.PER_PAGE_ITEM_COUNT')) {
         return '<div class="card-footer ' . $custom_class . '">
                     <div class="small text-muted" >

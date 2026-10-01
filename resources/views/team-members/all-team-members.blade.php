@@ -22,7 +22,7 @@
                 @endphp
                 <div class="col-xl-4 col-lg-6">
                     @if(permission('team_members', 'view'))
-                        <a href="{{route('team_member.view', ['called_from' => 'team', 'member_id' => my_encrypt($member_val->emp_id)])}}"
+                        <a href="{{route('team_member.view', array_merge(['called_from' => 'team', 'member_id' => my_encrypt($member_val->emp_id)],request()->query()))}}"
                            target="_self">
                             @endif
                             <div class="card">
