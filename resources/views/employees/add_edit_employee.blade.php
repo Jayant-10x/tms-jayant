@@ -1,7 +1,7 @@
 @extends('layouts.vertical', ['title' => ($mode == 'add'? 'Add' : 'Edit').' Employee'])
 
 @push('css')
-    @vite(['node_modules/choices.js/public/assets/styles/choices.min.css'])
+    @vite(['resources/css/choices.css'])
 @endpush
 
 @section('content')

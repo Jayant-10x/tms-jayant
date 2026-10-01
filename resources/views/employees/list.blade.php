@@ -1,7 +1,7 @@
 @extends('layouts.vertical', ['title' => 'Employees','subTitle' => 'Employees'])
 
 @push('css')
-    @vite(['node_modules/choices.js/public/assets/styles/choices.min.css'])
+    @vite(['resources/css/choices.css'])
 @endpush
 @section('content')
     <div class="card">
