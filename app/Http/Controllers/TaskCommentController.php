@@ -21,7 +21,7 @@ class TaskCommentController extends Controller {
             $checked_user_id = get_admin_user_data($user->adm_id)['adm_emp_id'];
 
             $isAssigner = $task->projectTaskAssignments->contains(function ($assignment) use ($checked_user_id) {
-                return $assignment->pta_assigned_by == $checked_user_id;
+                return $assignment->pta_assign_by == $checked_user_id;
             });
 
             $isAssignee = $task->projectTaskAssignments->contains(function ($assignment) use ($checked_user_id) {
