@@ -225,6 +225,132 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card task-main-cards">
+                        <div class="card-header pb-1 fs-16 fw-bold text-dark"
+                             style="border-bottom: #ededed 3px solid !important;">
+                            <i class="bi bi-chat-dots"></i>
+                            Comments
+                        </div>
+                        <div class="card-body" style="padding-top: -10px;"
+                             x-data="taskChat({{ $task_data->prt_id }}, {{ auth()->user()->adm_id }}, {{ json_encode($task_data->comments) }})">
+                            <!-- Chat Conversation List -->
+                            <ul x-ref="chatBox" class="chat-conversation-list p-3 chatbox-height overflow-y-auto"
+                                style="max-height: 500px;">
+                                <template x-for="item in comments" :key="item.id || item.prt_comment_id">
+                                    <li class="d-flex gap-2 clearfix mb-3"
+                                        :class="isMyMessage(item) ? 'justify-content-end odd' : ''">
+                                        <!-- Avatar (Left for Others) -->
+                                        <template x-if="!isMyMessage(item)">
+                                            <div class="chat-avatar text-center">
+                                                <img
+                                                    :src="getUserAvatar(item)"
+                                                    :alt="getUserName(item)"
+                                                    class="avatar rounded-circle"
+                                                    style="width: 36px; height: 36px; object-fit: cover;"
+                                                >
+                                            </div>
+                                        </template>
+
+                                        <!-- Conversation Text Box -->
+                                        <div class="chat-conversation-text"
+                                             :class="isMyMessage(item) ? 'ms-0' : ''">
+                                            <!-- Header: Author & Time -->
+                                            <div>
+                                                <p class="mb-2">
+                                                    <template x-if="!isMyMessage(item)">
+                                <span>
+                                    <span class="text-dark fw-medium me-1" x-text="getUserName(item)"></span>
+                                    <span class="text-muted fs-12" x-text="formatTime(item.created_at)"></span>
+                                </span>
+                                                    </template>
+                                                    <template x-if="isMyMessage(item)">
+                                <span class="d-flex justify-content-end">
+                                    <span class="text-muted fs-12 me-1" x-text="formatTime(item.created_at)"></span>
+                                    <span class="text-dark fw-medium ms-1">You</span>
+                                </span>
+                                                    </template>
+                                                </p>
+                                            </div>
+
+                                            <!-- Message Bubble with Hover Copy Icon -->
+                                            <div
+                                                class="d-flex align-items-center gap-1 message-bubble-wrapper"
+                                                :class="isMyMessage(item) ? 'flex-row-reverse' : ''"
+                                            >
+                                                <!-- Chat Message Bubble -->
+                                                <div class="chat-ctext-wrap">
+                                                    <p class="mb-0" x-text="getMessageText(item)"></p>
+                                                </div>
+
+                                                <!-- Hover Copy Button -->
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-link btn-copy-icon p-0 text-muted shadow-none opacity-0"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-title="Copy message"
+                                                    @click="copyToClipboard(item)"
+                                                >
+                                                    <i class="ri-file-copy-line fs-16"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Avatar (Right for Logged-In User) -->
+                                        <template x-if="isMyMessage(item)">
+                                            <div class="chat-avatar text-center">
+                                                <img
+                                                    :src="getUserAvatar(item)"
+                                                    alt="You"
+                                                    class="avatar rounded-circle"
+                                                    style="width: 36px; height: 36px; object-fit: cover;"
+                                                >
+                                            </div>
+                                        </template>
+                                    </li>
+                                </template>
+                            </ul>
+
+                            <!-- Input Form -->
+                            <div class="bg-opacity-50 p-2 border-top">
+                                <form @submit.prevent="sendMessage" name="chat-form" id="chat-form">
+                                    <meta name="csrf-token" content="{{ csrf_token() }}">
+                                    <div class="row align-items-center">
+                                        <div class="col mb-2 mb-sm-0 d-flex">
+                                            <div class="input-group">
+                                                <input
+                                                    type="text"
+                                                    x-model="newComment"
+                                                    class="form-control border-0 bg-primary-subtle"
+                                                    placeholder="Enter your message"
+                                                    :disabled="isSubmitting"
+                                                    @keydown.enter.prevent="sendMessage"
+                                                    style="border-radius: 50rem 20rem 20rem 50rem;"
+                                                >
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-auto ps-0">
+                                            <div class="d-flex gap-2">
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-primary chat-send d-flex align-items-center justify-content-center"
+                                                    :disabled="isSubmitting || !newComment.trim()"
+                                                    data-bs-toggle="tooltip" data-bs-title="Send"
+                                                    style="border-radius: 20rem 50rem 50rem 20rem; padding: 0.6rem 1rem"
+                                                >
+                                                    <iconify-icon icon="ri:send-ins-line" class="fs-16"></iconify-icon>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="col-md-4">
             <div class="card task-main-cards">

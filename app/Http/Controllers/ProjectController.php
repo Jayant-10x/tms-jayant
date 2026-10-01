@@ -91,7 +91,7 @@ class ProjectController extends Controller {
 
             // 2. Conditionally filter if the logged-in user is an employee
             if (get_logged_in_user_role() === 'employee') {
-                $loggedInUserId = get_logged_in_user_id();
+                $loggedInUserId = get_logged_in_user_emp_id();
                 $projectTaskQuery->whereIn('prt_id', function ($subQuery) use ($loggedInUserId) {
                     $subQuery->select('pta_prt_id')
                         ->from('project_task_assignments')

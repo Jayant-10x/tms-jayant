@@ -282,7 +282,7 @@ class ProjectTaskController extends Controller {
 
     public function viewTask($prt_id, $called_from = null) {
         $prt_id = my_decrypt($prt_id);
-        $task_data = ProjectTask::query()->with(['subTasks:pst_id,pst_prt_id,pst_title,pst_is_done', 'projectTaskAssignments:pta_prt_id,pta_assign_by,pta_assign_to', 'project:pro_id,pro_name', 'projectTaskAssignments.projectTaskAssignTo:emp_id,emp_full_name', 'projectTaskAssignments.projectTaskAssignedBy:emp_id,emp_full_name'])->where('prt_id', '=', $prt_id)->first();
+        $task_data = ProjectTask::query()->with(['subTasks:pst_id,pst_prt_id,pst_title,pst_is_done', 'projectTaskAssignments:pta_prt_id,pta_assign_by,pta_assign_to', 'project:pro_id,pro_name', 'projectTaskAssignments.projectTaskAssignTo:emp_id,emp_full_name', 'projectTaskAssignments.projectTaskAssignedBy:emp_id,emp_full_name', 'comments.user.employee'])->where('prt_id', '=', $prt_id)->first();
 
         if (!empty($task_data)) {
             $task_assignees = [];

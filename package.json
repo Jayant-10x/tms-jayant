@@ -10,7 +10,9 @@
         "@tailwindcss/vite": "^4.3.3",
         "concurrently": "^10.0.3",
         "fontaine": "^0.8.1",
+        "laravel-echo": "^2.5.0",
         "laravel-vite-plugin": "^3.1",
+        "pusher-js": "^8.6.0",
         "sass": "^1.104.0",
         "tailwindcss": "^4.3.3",
         "vite": "^8.0.0"
@@ -26,6 +28,7 @@
         "@fullcalendar/timegrid": "^6.1.21",
         "@iconify/json": "^2.2.522",
         "@popperjs/core": "^2.11.8",
+        "alpinejs": "^3.17.4",
         "apexcharts": "^7.0.0",
         "bootstrap": "^5.3.8",
         "bootstrap-icons": "^1.13.1",
