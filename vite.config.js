@@ -48,7 +48,6 @@ export default defineConfig({
                 'resources/js/pages/coming-soon.js',
                 'resources/js/pages/widgets.js',
                 'resources/js/pages/calendar.js',
-                'resources/js/echo.js',
                 // 'resources/js/components/maps-google.js',
                 /*'resources/js/components/maps-vector.js',
                 'resources/js/components/maps-canada.js',
