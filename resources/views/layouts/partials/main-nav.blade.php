@@ -1,14 +1,14 @@
 <div class="main-nav">
     <!-- Sidebar Logo -->
-    <div class="logo-box">
-        <a href="{{ route('dashboard')}}" class="logo-dark">
-            <img src="/images/logo-sm.png" class="logo-sm" alt="logo sm">
-            <img src="/images/logo-dark.png" class="logo-lg" alt="logo dark">
+    <div class="logo-box p-0">
+        <a href="{{ route('dashboard')}}" class="logo-dark text-center">
+            <img src="/images/tms-logo-sm.png" class="logo-sm" alt="logo sm" style="height: 40px;">
+            <img src="/images/tms-logo-dark.png" class="logo-lg" alt="logo dark" style="height: 80px;">
         </a>
 
-        <a href="{{ route('dashboard')}}" class="logo-light">
-            <img src="/images/logo-sm.png" class="logo-sm" alt="logo sm">
-            <img src="/images/logo-light.png" class="logo-lg" alt="logo light">
+        <a href="{{ route('dashboard')}}" class="logo-light text-center">
+            <img src="/images/tms-logo-sm.png" class="logo-sm" alt="logo sm" style="height: 40px;">
+            <img src="/images/tms-logo-light.png" class="logo-lg" alt="logo light" style="height: 80px;">
         </a>
     </div>
 

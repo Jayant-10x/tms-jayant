@@ -141,7 +141,7 @@ if (document.getElementById("sweetalert-image"))
         Swal.fire({
             title: 'Sweet!',
             text: 'Modal with a custom image.',
-            imageUrl: 'assets/images/logo-sm.png',
+            imageUrl: 'assets/images/tms-logo-sm.png',
             imageHeight: 40,
             confirmButtonClass: 'btn btn-primary w-xs mt-2',
             buttonsStyling: false,
