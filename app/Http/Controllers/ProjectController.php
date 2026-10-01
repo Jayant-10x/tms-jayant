@@ -120,7 +120,7 @@ class ProjectController extends Controller {
                 'completed_tasks' => $completed_tasks,
                 'pending_tasks' => $pending_tasks,
             ];
-//            dd($project_team, $project_tasks);
+
             return view('projects.view-project', compact('project_data', 'project_manager', 'pro_id', 'project_tasks', 'project_team', 'task_statistics', 'project_task_assignee'));
         } else {
             abort('404');
