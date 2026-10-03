@@ -31,7 +31,7 @@ class AdminUserController extends Controller {
             $filter_arr = ['adm_status' => $request->adm_status];
         }
 
-        $all_users = $adminBaseQuery->where('adm_role', '=', UserRoleEnum::ADMIN->value)->paginate(config('constants.PER_PAGE_ITEM_COUNT'),pageName: 'admin_users')->withQueryString();
+        $all_users = $adminBaseQuery->where('adm_role', '=', UserRoleEnum::ADMIN->value)->paginate(config('constants.PER_PAGE_ITEM_COUNT'), pageName: 'admin_users')->withQueryString();
         return view('admin-user.all-admin-user', compact('all_users', 'filter_arr'));
     }
 
@@ -55,9 +55,9 @@ class AdminUserController extends Controller {
         $admin_user->adm_created_by = setCreatedUpdatedBy();
         $admin_user->adm_created_on = $current_date;
         if ($admin_user->save()) {
-            return redirect()->route('admin_user_module.list', $request->query())->with('success', 'Credentials added successfully.');
+            return redirect()->back()->with('success', 'Credentials added successfully.');
         } else {
-            return redirect()->route('admin_user_module.list', $request->query())->with('error', 'Something went wrong.');
+            return redirect()->back()->with('error', 'Something went wrong.');
         }
     }
 
