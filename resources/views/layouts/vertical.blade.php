@@ -86,6 +86,7 @@
 @include("layouts.partials/right-sidebar")
 @include('layouts.partials.toastify')
 @include('layouts.partials/footer-scripts')
+@stack('script')
 </body>
 
 </html>
