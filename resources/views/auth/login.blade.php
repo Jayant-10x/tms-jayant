@@ -24,7 +24,7 @@
         .test-class {
             background: transparent;
             border-radius: 2rem;
-            box-shadow: 0 6px 6px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 6px rgb(255 255 255 / 18%), 0 0 20px rgb(255 255 255 / 10%);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2);
             border: solid 1px;
             backdrop-filter: blur(4px);
@@ -69,7 +69,7 @@
                             {{-- Added old() helper to retain the typed username --}}
                             <input type="text" id="login_user_name" name="adm_user_name"
                                    class="form-control bg-light bg-opacity-50 border-light text-light py-2 @error('adm_user_name') is-invalid @enderror"
-                                   placeholder="Enter your username" value="{{ old('adm_user_name') }}">
+                                   {{--placeholder="Enter your username"--}} value="{{ old('adm_user_name') }}">
 
                             {{-- Kept this here only for blank/empty validation checks --}}
                             @error('adm_user_name')
@@ -84,7 +84,7 @@
                                     class="text-danger">*</span></label>
                             <input type="password" id="password"
                                    class="form-control bg-light bg-opacity-50 border-light text-light py-2 @error('password') is-invalid @enderror"
-                                   placeholder="Enter your password" name="password" value="">
+                                   {{--placeholder="Enter your password"--}} name="password" value="">
 
                             @error('password')
                             <span class="validation-message text-danger fs-13">{{ $message }}</span>
