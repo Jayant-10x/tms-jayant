@@ -71,3 +71,7 @@
 .chat-conversation-list .chat-ctext-wrap {
     padding: 9px 18px !important;
 }
+
+#task-comment-error-container{
+    margin-left: 15px !important;
+}

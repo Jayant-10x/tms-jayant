@@ -296,4 +296,26 @@ $(document).ready(function () {
             }
         });
     });
+
+    $('#task-chat-form').validate({
+        rules: {
+            task_comment: {
+                required: true,
+                minlength: 1,
+                maxlength: 2000,
+            },
+        },
+        messages: {
+            task_comment: {
+                required: "Please enter your comment before proceeding.",
+            },
+        },
+        errorPlacement: function (error, element) {
+            if (element.attr("name") === "task_comment") {
+                error.appendTo("#task-comment-error-container");
+            } else {
+                error.insertAfter(element);
+            }
+        },
+    });
 });

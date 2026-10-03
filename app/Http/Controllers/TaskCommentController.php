@@ -35,13 +35,13 @@ class TaskCommentController extends Controller {
         }
 
         $request->validate([
-            'comment' => 'required|string|max:1000',
+            'task_comment' => 'required|string|max:2000',
         ]);
 
         TaskComment::query()->create([
             'prt_id' => $task->prt_id,
             'user_id' => $user->adm_id,
-            'comment' => $request->comment,
+            'comment' => $request->task_comment,
         ]);
         return redirect()->back()->with('success', 'Comment added successfully.');
     }
