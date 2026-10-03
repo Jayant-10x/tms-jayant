@@ -241,6 +241,10 @@ class FormAdvanced {
     initFormChoices() {
         var choicesExamples = document.querySelectorAll("[data-choices]");
         choicesExamples.forEach(function (item) {
+            if (item.choicesInstance) {
+                return;
+            }
+
             var choiceData = {};
             var isChoicesVal = item.attributes;
             if (isChoicesVal["data-choices-groups"]) {
@@ -252,7 +256,7 @@ class FormAdvanced {
             if (isChoicesVal["data-choices-search-true"]) {
                 choiceData.searchEnabled = true;
             }
-            if (isChoicesVal["data-choices-removeItem"]) {
+            if (isChoicesVal["data-choices-removeItem"] || isChoicesVal["data-choices-multiple-remove"]) {
                 choiceData.removeItemButton = true;
             }
             if (isChoicesVal["data-choices-sorting-false"]) {
@@ -261,20 +265,14 @@ class FormAdvanced {
             if (isChoicesVal["data-choices-sorting-true"]) {
                 choiceData.shouldSort = true;
             }
-            if (isChoicesVal["data-choices-multiple-remove"]) {
-                choiceData.removeItemButton = true;
-            }
             if (isChoicesVal["data-choices-limit"]) {
-                choiceData.maxItemCount = isChoicesVal["data-choices-limit"].value.toString();
-            }
-            if (isChoicesVal["data-choices-limit"]) {
-                choiceData.maxItemCount = isChoicesVal["data-choices-limit"].value.toString();
+                choiceData.maxItemCount = parseInt(isChoicesVal["data-choices-limit"].value, 10);
             }
             if (isChoicesVal["data-choices-editItem-true"]) {
-                choiceData.maxItemCount = true;
+                choiceData.editItems = true;
             }
             if (isChoicesVal["data-choices-editItem-false"]) {
-                choiceData.maxItemCount = false;
+                choiceData.editItems = false;
             }
             if (isChoicesVal["data-choices-text-unique-true"]) {
                 choiceData.duplicateItemsAllowed = false;
@@ -283,7 +281,14 @@ class FormAdvanced {
             if (isChoicesVal["data-choices-text-disabled-true"]) {
                 choiceData.addItems = false;
             }
-            isChoicesVal["data-choices-text-disabled-true"] ? new Choices(item, choiceData).disable() : new Choices(item, choiceData);
+
+            var instance = new Choices(item, choiceData);
+
+            if (isChoicesVal["data-choices-text-disabled-true"]) {
+                instance.disable();
+            }
+
+            item.choicesInstance = instance;
         });
     }
 

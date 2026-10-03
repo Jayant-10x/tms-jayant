@@ -81,30 +81,30 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function getChoicesInstance(element) {
-    if (element._choices) {
-        return element._choices;
+    if (element.choicesInstance) {
+        return element.choicesInstance;
     }
 
     // Fallback: If Choices wasn't initialized on page load because it was empty
     if (typeof Choices !== 'undefined') {
-        element._choices = new Choices(element, {
+        element.choicesInstance = new Choices(element, {
             searchEnabled: true,
             removeItemButton: false,
             itemSelectText: '',
             shouldSort: false,
         });
-        return element._choices;
+        return element.choicesInstance;
     }
 
     // Secondary Fallback: Check if Choices is attached to window
     if (typeof window.Choices !== 'undefined') {
-        element._choices = new window.Choices(element, {
+        element.choicesInstance = new window.Choices(element, {
             searchEnabled: true,
             removeItemButton: false,
             itemSelectText: '',
             shouldSort: false,
         });
-        return element._choices;
+        return element.choicesInstance;
     }
 
     return null;
@@ -393,7 +393,7 @@ $(document).ready(function () {
                 required: true,
                 minlength: 6,
                 maxlength: 20,
-                usernameRule:true
+                usernameRule: true
             },
             role: {
                 required: true
