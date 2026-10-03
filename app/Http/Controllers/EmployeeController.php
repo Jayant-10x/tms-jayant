@@ -20,9 +20,9 @@ class EmployeeController extends Controller {
             $filter_arr = ['emp_full_name' => $request->emp_name];
         }
 
-        if ($request->filled('emp_email')) {
-            $employeeBaseQuery->where('emp_email', 'like', '%' . $request->emp_email . '%');
-            $filter_arr = ['emp_email' => $request->emp_email];
+        if ($request->filled('emp_designation')) {
+            $employeeBaseQuery->where('emp_designation', '=', $request->emp_designation);
+            $filter_arr = ['emp_designation' => $request->emp_designation];
         }
 
         if ($request->filled('emp_dept')) {
@@ -40,7 +40,7 @@ class EmployeeController extends Controller {
             $filter_arr = ['emp_status' => $request->emp_status];
         }
 
-        $all_employees = $employeeBaseQuery->paginate(config('constants.PER_PAGE_ITEM_COUNT'),pageName: "employees")->withQueryString();
+        $all_employees = $employeeBaseQuery->paginate(config('constants.PER_PAGE_ITEM_COUNT'), pageName: "employees")->withQueryString();
         return view('employees.list', compact('all_employees', 'filter_arr'));
     }
 
