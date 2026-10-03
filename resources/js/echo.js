@@ -109,6 +109,7 @@ document.addEventListener('alpine:init', () => {
 
             try {
                 await navigator.clipboard.writeText(text);
+                console.log(window.showToast);
                 if (typeof window.showToast === 'function') {
                     window.showToast('Copied to clipboard!', '#10B981');
                 }
