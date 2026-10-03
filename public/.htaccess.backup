@@ -13,24 +13,12 @@
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
-    # =========================================================
-    # Laravel Reverb WebSocket
-    # =========================================================
-    RewriteCond %{HTTP:Upgrade} websocket [NC]
-    RewriteCond %{HTTP:Connection} upgrade [NC]
-    RewriteRule ^app/(.*)$ ws://127.0.0.1:8080/app/$1 [P,L]
-
-    # Prevent Laravel/LiteSpeed trailing slash redirect
-    # for Reverb
-    RewriteRule ^app/?$ - [L]
-
-    # =========================================================
-    # Laravel
-    # =========================================================
+    # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
 
+    # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]

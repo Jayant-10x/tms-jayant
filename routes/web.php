@@ -10,6 +10,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectSubTaskController;
 use App\Http\Controllers\ProjectTaskController;
+use App\Http\Controllers\TaskCommentController;
 use App\Http\Controllers\TeamMembersController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -97,6 +98,9 @@ Route::middleware('auth')->group(function () {
     Route::get('all-assigned-tasks', [ProjectTaskController::class, 'assignedByMe'])->middleware('permission:all_assigned_tasks.view|all_assigned_tasks.edit')->name('all_assigned_tasks');
     Route::get('team-tasks', [ProjectTaskController::class, 'teamTasks'])->middleware('permission:team_tasks.view|team_tasks.edit')->name('all_team_tasks');
     Route::get('my-tasks', [ProjectTaskController::class, 'myTasks'])->middleware('permission:my_tasks.view|my_tasks.edit')->name('my_tasks');
+
+    Route::post('/tasks/{prt_id}/comments', [TaskCommentController::class, 'store'])
+        ->name('tasks.comments.store');
 });
 Route::post('/employee/panel-status', function (Request $request) {
     if (!auth()->check()) {

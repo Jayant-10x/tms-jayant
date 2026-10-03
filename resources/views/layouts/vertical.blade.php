@@ -86,22 +86,6 @@
 @include("layouts.partials/right-sidebar")
 @include('layouts.partials.toastify')
 @include('layouts.partials/footer-scripts')
-@if (session('success'))
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            showToast(@json(session('success')), 'success');
-        });
-    </script>
-@endif
-
-@if (session('error'))
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            showToast(@json(session('error')), 'error');
-        });
-    </script>
-@endif
 @stack('script')
 </body>
 

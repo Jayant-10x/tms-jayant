@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
@@ -13,8 +14,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class AdminUser extends Authenticatable {
     use HasFactory, Notifiable;
 
-    protected $table = 'admin_users';
     public $timestamps = false;
+    protected $table = 'admin_users';
     protected $primaryKey = 'adm_id';
     protected $fillable = [
         'adm_id',
@@ -36,12 +37,6 @@ class AdminUser extends Authenticatable {
         'adm_last_activity_at' => 'datetime',
     ];
 
-    protected function admPassword(): Attribute {
-        return Attribute::make(
-            set: fn($value) => Hash::make($value),
-        );
-    }
-
     public function getAuthPasswordName() {
         return 'adm_password';
     }
@@ -52,6 +47,20 @@ class AdminUser extends Authenticatable {
 
     public function notifications(): MorphMany {
         return $this->morphMany(Notification::class, 'notifiable', 'not_notifiable_type', 'not_notifiable_id'
+        );
+    }
+
+    public function taskComments() {
+        return $this->hasMany(TaskComment::class);
+    }
+
+    public function employee(): BelongsTo {
+        return $this->belongsTo(Employee::class, 'adm_emp_id', 'emp_id');
+    }
+
+    protected function admPassword(): Attribute {
+        return Attribute::make(
+            set: fn($value) => Hash::make($value),
         );
     }
 }

@@ -1,30 +1,16 @@
-@if (session()->has('success') || session()->has('error') || session()->has('info') || session()->has('warning'))
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const notifications = [
-                {type: 'success', text: @json(session('success')), bg: '#10B981'},
-                {type: 'error', text: @json(session('error')), bg: '#EF4444'},
-                {type: 'info', text: @json(session('info')), bg: '#3B82F6'},
-                {type: 'warning', text: @json(session('warning')), bg: '#F59E0B'}
-            ];
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const notifications = [
+            {type: 'success', text: @json(session('success')) },
+            {type: 'error', text: @json(session('error')) },
+            {type: 'info', text: @json(session('info')) },
+            {type: 'warning', text: @json(session('warning')) },
+        ];
 
-            notifications.forEach(item => {
-                if (item.text) {
-                    Toastify({
-                        text: item.text,
-                        duration: 4000,
-                        close: true,
-                        gravity: "top",
-                        position: "right",
-                        stopOnFocus: true,
-                        style: {
-                            background: item.bg,
-                            borderRadius: "6px",
-                            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
-                        }
-                    }).showToast();
-                }
-            });
+        notifications.forEach(({type, text}) => {
+            if (text) {
+                window.showToast(text, type);
+            }
         });
-    </script>
-@endif
+    });
+</script>

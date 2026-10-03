@@ -7,18 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProjectTask extends Model {
-    protected $table = 'project_tasks';
     public $timestamps = false;
+    protected $table = 'project_tasks';
     protected $primaryKey = 'prt_id';
     protected $guarded = [];
-
-    protected function casts(): array {
-        return [
-            'prt_tags' => 'array',
-            'prt_attachments' => 'array',
-        ];
-    }
-
     protected $casts = [
         'prt_category' => \App\Enums\TaskCategoryEnum::class,
         'prt_priority' => \App\Enums\TaskPriority::class,
@@ -35,5 +27,16 @@ class ProjectTask extends Model {
 
     public function subTasks(): HasMany {
         return $this->hasMany(ProjectSubTask::class, 'pst_prt_id', 'prt_id');
+    }
+
+    public function comments() {
+        return $this->hasMany(TaskComment::class, 'prt_id', 'prt_id');
+    }
+
+    protected function casts(): array {
+        return [
+            'prt_tags' => 'array',
+            'prt_attachments' => 'array',
+        ];
     }
 }

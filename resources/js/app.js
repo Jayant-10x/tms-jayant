@@ -682,16 +682,31 @@ document.addEventListener('DOMContentLoaded', function (e) {
     new ToastNotification().init();
 });
 
-/*window.showToast = function (message, type = 'success') {
+window.showToast = function (message, type = 'info') {
+    if (!message) return;
+
+    const backgrounds = {
+        success: '#10B981',
+        error: '#EF4444',
+        info: '#3B82F6',
+        warning: '#F59E0B',
+    };
+
     Toastify({
         text: message,
         duration: 4000,
         close: true,
-        gravity: "top",
-        position: "right",
-        className: type === 'success' ? 'toast-success' : 'toast-error',
+        gravity: 'top',
+        position: 'right',
+        stopOnFocus: true,
+        style: {
+            background: backgrounds[type] ?? backgrounds.info,
+            borderRadius: '6px',
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+        }
     }).showToast();
-};*/
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     function initBootstrapComponents(container = document) {
         // Initialize Tooltips
@@ -751,3 +766,11 @@ window.showNotification = function (message, type) {
         }
     }).showToast();
 };
+
+/**
+ * Echo exposes an expressive API for subscribing to channels and listening
+ * for events that are broadcast by Laravel. Echo and event broadcasting
+ * allow your team to quickly build robust real-time web applications.
+ */
+
+import './echo';
