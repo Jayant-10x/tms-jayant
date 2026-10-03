@@ -234,55 +234,85 @@
                             <i class="bi bi-chat-dots"></i>
                             Comments
                         </div>
-                        <div class="card-body" style="padding-top: -10px;"
-                             x-data="taskChat({{ $task_data->prt_id }}, {{ auth()->user()->adm_id }}, {{ json_encode($task_data->comments) }})">
+                        <div class="card-body" style="padding-top: -10px;">
                             <!-- Chat Conversation List -->
-                            <ul x-ref="chatBox" class="chat-conversation-list p-3 chatbox-height overflow-y-auto"
+                            <ul class="chat-conversation-list p-3 chatbox-height overflow-y-auto"
                                 style="max-height: 500px;">
-                                <template x-for="item in comments" :key="item.id || item.prt_comment_id">
-                                    <li class="d-flex gap-2 clearfix mb-3"
-                                        :class="isMyMessage(item) ? 'justify-content-end odd' : ''">
+                                @foreach($task_data->comments as $item)
+                                    @php
+                                        $commenter_avtar = asset('images/users/avatar-1.jpg');
+                                        $isMyMessage = $item->user_id == auth()->user()->adm_id;
+                                        $commenter_name = $item->user->adm_name;
+                                        $commentDate = \Carbon\Carbon::parse($item->created_at);
+
+                                        if(empty($item->user->employee) && !empty($item->user->adm_photo)) {
+                                            $commenter_avtar = asset('/storage/admin/'.$item->user->adm_photo);
+                                        }
+                                        if(!empty($item->user->employee) && !empty($item->user->employee->emp_photo)) {
+                                            $commenter_avtar = asset('/storage/employees/'.$item->user->employee->emp_photo);
+                                        }
+                                    @endphp
+                                    <li class="d-flex gap-2 clearfix mb-3 {{ $isMyMessage ? 'justify-content-end odd' : '' }}">
                                         <!-- Avatar (Left for Others) -->
-                                        <template x-if="!isMyMessage(item)">
+                                        @if(!$isMyMessage)
                                             <div class="chat-avatar text-center">
                                                 <img
-                                                    :src="getUserAvatar(item)"
-                                                    :alt="getUserName(item)"
+                                                    src="{{ $commenter_avtar }}"
+                                                    alt="{{ $item->user->name ?? 'User' }}"
                                                     class="avatar rounded-circle"
                                                     style="width: 36px; height: 36px; object-fit: cover;"
                                                 >
                                             </div>
-                                        </template>
+                                        @endif
 
                                         <!-- Conversation Text Box -->
-                                        <div class="chat-conversation-text"
-                                             :class="isMyMessage(item) ? 'ms-0' : ''">
+                                        <div class="chat-conversation-text {{ $isMyMessage ? 'ms-0' : '' }}">
                                             <!-- Header: Author & Time -->
                                             <div>
                                                 <p class="mb-2">
-                                                    <template x-if="!isMyMessage(item)">
-                                <span>
-                                    <span class="text-dark fw-medium me-1" x-text="getUserName(item)"></span>
-                                    <span class="text-muted fs-12" x-text="formatTime(item.created_at)"></span>
-                                </span>
-                                                    </template>
-                                                    <template x-if="isMyMessage(item)">
-                                <span class="d-flex justify-content-end">
-                                    <span class="text-muted fs-12 me-1" x-text="formatTime(item.created_at)"></span>
-                                    <span class="text-dark fw-medium ms-1">You</span>
-                                </span>
-                                                    </template>
+                                                    @if(!$isMyMessage)
+                                                        <span>
+                                                            <span class="text-dark fw-medium me-1">
+                                                                {{ $commenter_name}}
+                                                            </span>
+
+                                                            <span class="text-muted fs-12">
+                                                                @if($commentDate->isToday())
+                                                                    Today, {{ $commentDate->format('h:i A') }}
+                                                                @elseif($commentDate->isYesterday())
+                                                                    Yesterday, {{ $commentDate->format('h:i A') }}
+                                                                @else
+                                                                    {{ $commentDate->format('d M Y, h:i A') }}
+                                                                @endif
+                                                            </span>
+                                                        </span>
+                                                    @else
+                                                        <span class="d-flex justify-content-end">
+                                                            <span class="text-muted fs-12 me-1">
+                                                                @if($commentDate->isToday())
+                                                                    Today, {{ $commentDate->format('h:i A') }}
+                                                                @elseif($commentDate->isYesterday())
+                                                                    Yesterday, {{ $commentDate->format('h:i A') }}
+                                                                @else
+                                                                    {{ $commentDate->format('d M Y, h:i A') }}
+                                                                @endif
+                                                            </span>
+
+                                                            <span class="text-dark fw-medium ms-1">
+                                                                You
+                                                            </span>
+                                                        </span>
+                                                    @endif
                                                 </p>
                                             </div>
-
                                             <!-- Message Bubble with Hover Copy Icon -->
                                             <div
-                                                class="d-flex align-items-center gap-1 message-bubble-wrapper"
-                                                :class="isMyMessage(item) ? 'flex-row-reverse' : ''"
-                                            >
+                                                class="d-flex align-items-center gap-1 message-bubble-wrapper {{ $isMyMessage ? 'flex-row-reverse' : '' }}">
                                                 <!-- Chat Message Bubble -->
                                                 <div class="chat-ctext-wrap">
-                                                    <p class="mb-0" x-text="getMessageText(item)"></p>
+                                                    <p class="mb-0">
+                                                        {{ $item->comment ?? $item->message ?? $item->prt_comment }}
+                                                    </p>
                                                 </div>
 
                                                 <!-- Hover Copy Button -->
@@ -291,42 +321,43 @@
                                                     class="btn btn-link btn-copy-icon p-0 text-muted shadow-none opacity-0"
                                                     data-bs-toggle="tooltip"
                                                     data-bs-title="Copy message"
-                                                    @click="copyToClipboard(item)"
+                                                    onclick="copyMessage(this)"
+                                                    data-message="{{ $item->comment ?? $item->message ?? $item->prt_comment }}"
                                                 >
                                                     <i class="ri-file-copy-line fs-16"></i>
                                                 </button>
                                             </div>
                                         </div>
-
                                         <!-- Avatar (Right for Logged-In User) -->
-                                        <template x-if="isMyMessage(item)">
+                                        @if($isMyMessage)
                                             <div class="chat-avatar text-center">
                                                 <img
-                                                    :src="getUserAvatar(item)"
+                                                    src="{{ $commenter_avtar }}"
                                                     alt="You"
                                                     class="avatar rounded-circle"
                                                     style="width: 36px; height: 36px; object-fit: cover;"
                                                 >
                                             </div>
-                                        </template>
+                                        @endif
                                     </li>
-                                </template>
+                                @endforeach
                             </ul>
 
                             <!-- Input Form -->
                             <div class="bg-opacity-50 p-2 border-top">
-                                <form @submit.prevent="sendMessage" name="chat-form" id="chat-form">
-                                    <meta name="csrf-token" content="{{ csrf_token() }}">
+                                <form method="POST" action="{{ route('tasks.comments.store', $task_data->prt_id) }}"
+                                      name="chat-form" id="chat-form">
+                                    @csrf
                                     <div class="row align-items-center">
                                         <div class="col mb-2 mb-sm-0 d-flex">
                                             <div class="input-group">
                                                 <input
                                                     type="text"
-                                                    x-model="newComment"
+                                                    name="comment"
                                                     class="form-control border-0 bg-primary-subtle"
                                                     placeholder="Enter your message"
-                                                    :disabled="isSubmitting"
-                                                    @keydown.enter.prevent="sendMessage"
+                                                    autocomplete="off"
+                                                    required
                                                     style="border-radius: 50rem 20rem 20rem 50rem;"
                                                 >
                                             </div>
@@ -336,8 +367,8 @@
                                                 <button
                                                     type="submit"
                                                     class="btn btn-primary chat-send d-flex align-items-center justify-content-center"
-                                                    :disabled="isSubmitting || !newComment.trim()"
-                                                    data-bs-toggle="tooltip" data-bs-title="Send"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-title="Send"
                                                     style="border-radius: 20rem 50rem 50rem 20rem; padding: 0.6rem 1rem"
                                                 >
                                                     <iconify-icon icon="ri:send-ins-line" class="fs-16"></iconify-icon>
