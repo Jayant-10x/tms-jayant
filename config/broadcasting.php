@@ -30,7 +30,7 @@ return [
 
     'connections' => [
 
-        'reverb' => [
+        /*'reverb' => [
             'driver' => 'reverb',
             'key' => env('REVERB_APP_KEY'),
             'secret' => env('REVERB_APP_SECRET'),
@@ -44,7 +44,7 @@ return [
             'client_options' => [
                 // Guzzle client options: https://docs.guzzlephp.org/en/stable/request-options.html
             ],
-        ],
+        ],*/
 
         'pusher' => [
             'driver' => 'pusher',
