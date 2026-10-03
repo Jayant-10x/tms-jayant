@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\DepartmentsEnum;
 use App\Enums\DesignationEnum;
 use App\Enums\ProjectStatus;
+use App\Enums\UserRoleEnum;
 use App\Models\Employee;
 use App\Models\Project;
 use App\Models\SubTaskDoneHistory;
@@ -98,6 +99,28 @@ class AjaxController extends Controller {
         ]);
     }
 
+    private function getCreateTaskFormViaAjax($mode) {
+        if ($mode == 'add') {
+            $team_members = get_employee_children_in_depth((int)get_logged_in_user_emp_id(), depth: config('constants.DEFAULT_DEPTH'));
+            $projects = [];
+
+            if (get_logged_in_emp_designation() == DesignationEnum::MANAGER || get_logged_in_user_role() == UserRoleEnum::MANAGER->value) {
+                $projectBaseQuery = Project::query()->select('pro_id', 'pro_name')->where('pro_status', '=', ProjectStatus::ACTIVE->value);
+                $projectBaseQuery->whereIn('pro_manager', array_column($team_members, 'emp_id'))
+                    ->orWhere('pro_manager', '=', get_logged_in_user_emp_id());
+                $projects = $projectBaseQuery->get()->pluck('pro_name', 'pro_id')->toArray();
+            }
+            $data = view('project-task.add-project-task', compact('team_members', 'projects'))->render();
+        } else {
+            $data = '';
+        }
+        return ['data' => $data, 'secondary_data' => 'Create Task'];
+    }
+
+    private function getAnotherCreateTaskFormViaAjax($mode, $primary_id) {
+        return ['data' => '<h1>Another Hello Comes from Ajax Controller.</h1>', 'secondary_data' => 'Another Create Task'];
+    }
+
     public function getViewPopUpsPage(Request $request) {
         $section = my_decrypt($request->section, true);
         $mode = my_decrypt($request->mode, true);
@@ -120,23 +143,6 @@ class AjaxController extends Controller {
         ]);
     }
 
-    private function getCreateTaskFormViaAjax($mode) {
-        if ($mode == 'add') {
-            $team_members = get_employee_children_in_depth((int)get_logged_in_user_emp_id(), depth: config('constants.DEFAULT_DEPTH'));
-            $projectBaseQuery = Project::query()->select('pro_id', 'pro_name')->where('pro_status', '=', ProjectStatus::ACTIVE->value);
-            if (get_logged_in_emp_designation() == DesignationEnum::MANAGER) {
-                $projectBaseQuery->whereIn('pro_manager', array_column($team_members, 'emp_id'))
-                                    ->orWhere('pro_manager', '=', get_logged_in_user_emp_id());
-            }
-            $projects = $projectBaseQuery->get()->pluck('pro_name', 'pro_id')->toArray();
-            $data = view('project-task.add-project-task', compact('team_members', 'projects'))->render();
-        } else {
-            $data = '';
-        }
-        return ['data' => $data, 'secondary_data' => 'Create Task'];
-    }
-
-
     private function getSubTaskDoneHistoryView($primary_id) {
         if (!empty($primary_id)) {
             $history_data = SubTaskDoneHistory::query()->where('sdh_pst_id', '=', $primary_id)->orderBy('sdh_updated_on', 'desc')->get()->toArray();
@@ -145,14 +151,6 @@ class AjaxController extends Controller {
             $data = '';
         }
         return ['data' => $data, 'secondary_data' => 'Checklist / Subtask done history'];
-    }
-
-    private function getAnotherCreateTaskFormViaAjax($mode, $primary_id) {
-        return ['data' => '<h1>Another Hello Comes from Ajax Controller.</h1>', 'secondary_data' => 'Another Create Task'];
-    }
-
-    private function getTaskViewViaAjax($mode, $primary_id) {
-        return ['data' => '<h1>Task View Comes from Ajax Controller.</h1>', 'secondary_data' => 'View Task'];
     }
 
     public function checkUniqueEmpInternalId(Request $request) {
@@ -183,5 +181,9 @@ class AjaxController extends Controller {
         }
         $isExist = $isExistQuery->exists();
         return response()->json(!$isExist);
+    }
+
+    private function getTaskViewViaAjax($mode, $primary_id) {
+        return ['data' => '<h1>Task View Comes from Ajax Controller.</h1>', 'secondary_data' => 'View Task'];
     }
 }

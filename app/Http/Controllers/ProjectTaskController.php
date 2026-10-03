@@ -195,6 +195,38 @@ class ProjectTaskController extends Controller {
         return view('my-tasks.my-tasks', compact('my_tasks', 'task_statistics', 'tasks_by_status', 'calendar_tasks'));
     }
 
+    public function userTaskStatistics($emp_ids, $pro_id = null) {
+        $emp_ids = is_array($emp_ids) ? $emp_ids : [$emp_ids];
+        $userTaskQuery = ProjectTask::query()->join('project_task_assignments', 'prt_id', '=', 'pta_prt_id');
+
+        if (!empty($pro_id)) {
+            $userTaskQuery->join('projects', 'prt_pro_id', '=', 'pro_id')->where('prt_pro_id', $pro_id);
+        }
+
+        $userTaskData = $userTaskQuery->whereIn('pta_assign_to', $emp_ids)->get();
+        $statistics = [];
+        foreach ($emp_ids as $emp_id) {
+            $employeeTasks = $userTaskData->where('pta_assign_to', $emp_id);
+
+            $total_tasks = $employeeTasks->count();
+            $progress_tasks = $employeeTasks->where('prt_status', TaskStatus::IN_PROGRESS)->count();
+            $overdue_tasks = $employeeTasks->whereNotIn('prt_status', [TaskStatus::COMPLETED, TaskStatus::CANCELLED])->where('prt_due_date', '<', date('Y-m-d'))->count();
+            $pending_dashboard_count = $employeeTasks->whereNotIn('prt_status', [TaskStatus::COMPLETED, TaskStatus::CANCELLED, TaskStatus::IN_PROGRESS])->where('prt_due_date', '>=', date('Y-m-d'))->count();
+            $completed_tasks = $employeeTasks->where('prt_status', TaskStatus::COMPLETED)->count();
+            $pending_tasks = $total_tasks - $completed_tasks;
+
+            $statistics[$emp_id] = [
+                'total_tasks' => $total_tasks,
+                'completed_tasks' => $completed_tasks,
+                'pending_tasks' => $pending_tasks,
+                'overdue_tasks' => $overdue_tasks,
+                'pending_dashboard_count' => $pending_dashboard_count,
+                'progress_tasks' => $progress_tasks,
+            ];
+        }
+        return $statistics;
+    }
+
     public function store(Request $request) {
         $request->merge([
             'task_tags_hid' => $request->has('task_tags_hid') ? json_decode($request->task_tags_hid, true) : null,
@@ -280,26 +312,55 @@ class ProjectTaskController extends Controller {
         }
     }
 
+    private function taskAssignment($prt_id, $assignees) {
+        if (!empty($assignees) && $prt_id) {
+            $assignees_arr = [];
+
+            $created_by = setCreatedUpdatedBy();
+            $assigned_by = get_logged_in_user_emp_id();
+            $current_date = date(config('constants.DB_DATE_TIME_FORMAT'));
+            foreach ($assignees as $assignee) {
+                $assignees_arr[] = [
+                    'pta_prt_id' => $prt_id,
+                    'pta_assign_by' => $assigned_by,
+                    'pta_assign_to' => $assignee,
+                    'pta_created_by' => $created_by,
+                    'pta_created_on' => $current_date,
+                ];
+            }
+            if (!empty($assignees_arr)) {
+                ProjectTaskAssignment::query()->insert($assignees_arr);
+            }
+            return true;
+        }
+        return false;
+    }
+
     public function viewTask($prt_id, $called_from = null) {
         $prt_id = my_decrypt($prt_id);
         $task_data = ProjectTask::query()->with(['subTasks:pst_id,pst_prt_id,pst_title,pst_is_done', 'projectTaskAssignments:pta_prt_id,pta_assign_by,pta_assign_to', 'project:pro_id,pro_name', 'projectTaskAssignments.projectTaskAssignTo:emp_id,emp_full_name', 'projectTaskAssignments.projectTaskAssignedBy:emp_id,emp_full_name', 'comments.user.employee'])->where('prt_id', '=', $prt_id)->first();
 
         if (!empty($task_data)) {
-            $task_assignees = [];
-            $task_assigned_by = [];
-            if (!empty($task_data->projectTaskAssignments)) {
-                foreach ($task_data->projectTaskAssignments as $task_assignment) {
-                    if (!in_array($task_assignment->projectTaskAssignTo->emp_id, array_keys($task_assignees))) {
-                        $task_assignees[$task_assignment->projectTaskAssignTo->emp_id] = $task_assignment->projectTaskAssignTo->emp_full_name;
-                    }
-                    if (count($task_assigned_by) == 0) {
-                        $task_assigned_by[$task_assignment->projectTaskAssignedBy->emp_id] = $task_assignment->projectTaskAssignedBy->emp_full_name;
+            if ((new ProjectController())->getAllProjectExistingMembers($task_data->prt_pro_id, get_logged_in_user_emp_id()) || is_admin()) {
+                $task_assignees = [];
+                $task_assigned_by = [];
+                if (!empty($task_data->projectTaskAssignments)) {
+                    foreach ($task_data->projectTaskAssignments as $task_assignment) {
+                        if (!in_array($task_assignment->projectTaskAssignTo->emp_id, array_keys($task_assignees))) {
+                            $task_assignees[$task_assignment->projectTaskAssignTo->emp_id] = $task_assignment->projectTaskAssignTo->emp_full_name;
+                        }
+                        if (count($task_assigned_by) == 0) {
+                            $task_assigned_by[$task_assignment->projectTaskAssignedBy->emp_id] = $task_assignment->projectTaskAssignedBy->emp_full_name;
+                        }
                     }
                 }
-            }
-            $project_task_assignee = !empty($task_assignees) ? array_keys($task_assignees) : [];
+                $project_task_assignee = !empty($task_assignees) ? array_keys($task_assignees) : [];
 
-            return view('project-task.view-task', compact('prt_id', 'task_data', 'task_assignees', 'task_assigned_by', 'called_from', 'project_task_assignee'));
+                return view('project-task.view-task', compact('prt_id', 'task_data', 'task_assignees', 'task_assigned_by', 'called_from', 'project_task_assignee'));
+            } else {
+                abort('403');
+            }
+
         } else {
             abort('404');
         }
@@ -377,61 +438,5 @@ class ProjectTaskController extends Controller {
                 'url' => asset('storage/task_attachments/' . $fileName),
             ],
         ]);
-    }
-
-    private function taskAssignment($prt_id, $assignees) {
-        if (!empty($assignees) && $prt_id) {
-            $assignees_arr = [];
-
-            $created_by = setCreatedUpdatedBy();
-            $assigned_by = get_logged_in_user_emp_id();
-            $current_date = date(config('constants.DB_DATE_TIME_FORMAT'));
-            foreach ($assignees as $assignee) {
-                $assignees_arr[] = [
-                    'pta_prt_id' => $prt_id,
-                    'pta_assign_by' => $assigned_by,
-                    'pta_assign_to' => $assignee,
-                    'pta_created_by' => $created_by,
-                    'pta_created_on' => $current_date,
-                ];
-            }
-            if (!empty($assignees_arr)) {
-                ProjectTaskAssignment::query()->insert($assignees_arr);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    public function userTaskStatistics($emp_ids, $pro_id = null) {
-        $emp_ids = is_array($emp_ids) ? $emp_ids : [$emp_ids];
-        $userTaskQuery = ProjectTask::query()->join('project_task_assignments', 'prt_id', '=', 'pta_prt_id');
-
-        if (!empty($pro_id)) {
-            $userTaskQuery->join('projects', 'prt_pro_id', '=', 'pro_id')->where('prt_pro_id', $pro_id);
-        }
-
-        $userTaskData = $userTaskQuery->whereIn('pta_assign_to', $emp_ids)->get();
-        $statistics = [];
-        foreach ($emp_ids as $emp_id) {
-            $employeeTasks = $userTaskData->where('pta_assign_to', $emp_id);
-
-            $total_tasks = $employeeTasks->count();
-            $progress_tasks = $employeeTasks->where('prt_status', TaskStatus::IN_PROGRESS)->count();
-            $overdue_tasks = $employeeTasks->whereNotIn('prt_status', [TaskStatus::COMPLETED, TaskStatus::CANCELLED])->where('prt_due_date', '<', date('Y-m-d'))->count();
-            $pending_dashboard_count = $employeeTasks->whereNotIn('prt_status', [TaskStatus::COMPLETED, TaskStatus::CANCELLED, TaskStatus::IN_PROGRESS])->where('prt_due_date', '>=', date('Y-m-d'))->count();
-            $completed_tasks = $employeeTasks->where('prt_status', TaskStatus::COMPLETED)->count();
-            $pending_tasks = $total_tasks - $completed_tasks;
-
-            $statistics[$emp_id] = [
-                'total_tasks' => $total_tasks,
-                'completed_tasks' => $completed_tasks,
-                'pending_tasks' => $pending_tasks,
-                'overdue_tasks' => $overdue_tasks,
-                'pending_dashboard_count' => $pending_dashboard_count,
-                'progress_tasks' => $progress_tasks,
-            ];
-        }
-        return $statistics;
     }
 }
