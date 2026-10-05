@@ -62,5 +62,7 @@
     </div>
     {!! generate_pagination($project_tasks,"Tasks") !!}
 @else
-    {!! generate_no_record_html() !!}
+    <div class="row">
+        {!! generate_no_record_html() !!}
+    </div>
 @endif
