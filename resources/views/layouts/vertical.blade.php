@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <meta name="tab-retain-token" content="{{ hash_hmac('sha256', session()->getId(), config('app.key')) }}">
     @include('layouts.partials/title-meta', ['title' => $title])
     @include('layouts.partials/head-css')
 </head>
@@ -86,6 +87,27 @@
 @include("layouts.partials/right-sidebar")
 @include('layouts.partials.toastify')
 @include('layouts.partials/footer-scripts')
+<script>
+    $(function () {
+        const currentToken = $('meta[name="tab-retain-token"]').attr('content');
+        const key = 'active_tab_' + window.location.pathname;
+
+        if (localStorage.getItem('tab_sync_token') !== currentToken) {
+            localStorage.clear();
+            localStorage.setItem('tab_sync_token', currentToken);
+        }
+
+        const activeTab = localStorage.getItem(key);
+        if (activeTab) {
+            $(`[data-bs-target="${activeTab}"], [href="${activeTab}"]`).tab('show');
+        }
+
+        $('a[data-bs-toggle="tab"], button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+            const target = $(e.target).attr('data-bs-target') || $(e.target).attr('href');
+            localStorage.setItem(key, target);
+        });
+    });
+</script>
 @stack('script')
 </body>
 

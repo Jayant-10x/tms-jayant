@@ -17,4 +17,13 @@ enum DesignationEnum: string {
             self::MANAGER => 'Manager',
         };
     }
+
+    public static function all_designations(): array {
+        return [
+            self::MANAGER,
+            self::TL,
+            self::EXECUTIVE,
+            self::INTERN,
+        ];
+    }
 }
